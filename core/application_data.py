@@ -9,13 +9,16 @@ class ApplicationData:
         self._id_routes = 0   # UID for creating route
         self._packages: dict[int, object] = dict()
         self._routes: dict[int,object] = dict()
+        self._vehicles: dict[int, object] = dict()
         
+
+#TODO: Create interface of methods for the command classes
     
     def find_package(self, id:int) -> object: #TODO:
         if id not in self._packages:
             raise ValueError(f"Package id: {id} cannot be found in the system.")
         return self._packages[id]
-        
+    
     def find_route(self, id:int) -> object: #TODO:
         if id not in self._routes:
             raise ValueError(f"Route id: {id} cannt be found in the system.")
@@ -43,6 +46,7 @@ class ApplicationData:
                 result.append(f" Package: {id} at {package.current_location} city")
         return '\n'.join(result)
     
+    
     def _generate_package_id(self):
         self._id_package += 1
         return self._id_package
@@ -52,7 +56,6 @@ class ApplicationData:
         return self._id_routes
     
     
-    #TODO: Create interface of methods for the command classes
     
     
     
