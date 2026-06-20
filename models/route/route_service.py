@@ -1,4 +1,5 @@
 from models.route.route import Route
+from models.route.route_status import RouteStatus
 
 class RouteService:
     
@@ -64,3 +65,30 @@ class RouteService:
 
     def get_all_routes(self):
         return list(self.app_data.routes.values())
+    
+    
+    # TODO add logic to prevent starting a completed route because right now this would allow COMPLETED -> IN_PROGRESS
+    def start_route(self, route_id: int):
+        route = self.get_route(route_id)
+        
+        if route.truck_id is None:
+            raise ValueError("Cannot start a route without a truck assigned to it")
+        
+        route.status = RouteStatus.IN_PROGRESS
+        
+        
+    def complete_route(self, route_id: int):
+        route = self.get_route(route_id)
+        
+        # TODO this works even if route was never started 
+        route.status = RouteStatus.COMPLETED
+        
+        
+    # TODO Implement    
+    def get_routes_by_status(self, status: RouteStatus):
+        pass
+    
+    # TODO
+    # route_service.get_routes_by_status(
+    # RouteStatus.IN_PROGRESS
+    # )

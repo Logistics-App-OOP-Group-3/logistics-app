@@ -1,4 +1,5 @@
 from models.route.route_stop import RouteStop
+from models.route.route_status import RouteStatus
 
 
 class Route:
@@ -13,6 +14,9 @@ class Route:
 
         self.route_id = route_id
         self.stops = stops
+        
+        #status of route starts as planned
+        self.status = RouteStatus.PLANNED
 
         self.truck_id = None
         self.package_ids = []
