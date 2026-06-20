@@ -16,6 +16,10 @@ class ApplicationData:
         self._vehicles: dict[int, Vehicle] = dict()
         self._load_vehicle_database()
         
+    @property             # vehicles
+    def vehicles(self):
+        return tuple(self._vehicles.values())
+    
 # ID GENERATORS
     def generate_package_id(self):
         self._id_package += 1
@@ -24,12 +28,8 @@ class ApplicationData:
         self._id_routes += 1
         return self._id_routes
     
-    @property             # vehicles
-    def vehicles(self):
-        return tuple(self._vehicles.values())
-    
 # FIND METHODS
-    def find_package(self, id:int) -> object: #TODO:
+    def find_package(self, id:int) -> object: #TODO: object -> Package
         if id not in self._packages:
             raise ValueError(f"Package id: {id} cannot be found in the system.")
         return self._packages[id]
@@ -61,6 +61,12 @@ class ApplicationData:
             for i in range(int(start), int(end) + 1):
                 vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
                 self.add_vehicle(vehicle)
+      
+# Methods for loading models from files          
+    # def _load_route_database(self):
+    #     pass
+    # def _load_package_database(self):
+    #     pass
 
         
     
