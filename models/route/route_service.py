@@ -1,6 +1,6 @@
 from models.route.route import Route
 from models.route.route_status import RouteStatus
-
+from core.application_data import ApplicationData
 class RouteService:
     
     ### Handles all business logic related to routes
@@ -14,6 +14,7 @@ class RouteService:
             raise Exception("Route already exists")
 
         route = Route(route_id, stops)
+        self.app_data.add_route(route)
         self.app_data.routes[route_id] = route
 
         return route
