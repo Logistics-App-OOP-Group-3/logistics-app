@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Cities(Enum):
+class City(Enum):
     SYD = "Sydney"
     MEL = "Melbourne"
     ADL = "Adelaide"

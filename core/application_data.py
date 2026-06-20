@@ -1,6 +1,5 @@
 from models.vehicle import Vehicle
 
-#TODO : import model classes
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from models.route.route import Route 
@@ -16,6 +15,10 @@ class ApplicationData:
         self._vehicles: dict[int, Vehicle] = dict()
         self._load_vehicle_database()
         
+    @property             # vehicles
+    def vehicles(self):
+        return tuple(self._vehicles.values()) 
+    
 # ID GENERATORS
     def generate_package_id(self):
         self._id_package += 1
@@ -24,9 +27,7 @@ class ApplicationData:
         self._id_routes += 1
         return self._id_routes
     
-    @property             # vehicles
-    def vehicles(self):
-        return tuple(self._vehicles.values())
+
     
 # FIND METHODS
     def find_package(self, id:int) -> object: #TODO:
@@ -39,7 +40,7 @@ class ApplicationData:
             raise ValueError(f"Route id: {id} cannt be found in the system.")
         return self._routes[id]
     
-    def find_vehicle(self, id:int):
+    def find_vehicle(self, id:int) -> Vehicle:
         if id not in self._vehicles:
             raise ValueError(f"Vehicle id: {id} cannot be found in the system.")
 
@@ -61,16 +62,6 @@ class ApplicationData:
             for i in range(int(start), int(end) + 1):
                 vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
                 self.add_vehicle(vehicle)
-
-        
-    
-        for vehicle_model_line in Vehicle.vehicles_csv_line:
-            vehicle_model_range, *params = vehicle_model_line.split(',')
-            start, end = vehicle_model_range.split('-')
-            for i in range(int(start), int(end) + 1):
-                vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
-                self.add_vehicle(vehicle)
-
         
     
 

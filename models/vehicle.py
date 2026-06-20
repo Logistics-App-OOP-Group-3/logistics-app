@@ -1,3 +1,4 @@
+from enums.city import City
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from models.route.route import Route
@@ -24,7 +25,7 @@ class Vehicle:
         for package in packages:
             self._packages[package.id] = package
     
-    def remove_packages(self, city:str): #TODO: str -> ENUM
+    def remove_packages(self, city: City):
         """Remove packages based on the city arg == package.end_location"""
         for package in self._packages.values():
             if package.city == city:

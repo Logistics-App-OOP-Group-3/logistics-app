@@ -1,7 +1,9 @@
 from commands.base.base_command import BaseCommand
+from commands.validation_helper import validate_params_count
 
 class CreatePackageCommand(BaseCommand):
     def __init__(self, params, app_data, package_service, route_service):
+        validate_params_count(params, 4)
         super().__init__(params, app_data)
         self._package_service = package_service
         self._route_service = route_service

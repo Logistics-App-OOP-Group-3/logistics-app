@@ -37,13 +37,13 @@ class RouteService:
         route = self.get_route(route_id)
 
         if package.route_id is not None:
-            raise Exception("Package already assigned")
+            raise ValueError("Package already assigned")
 
         if not route.can_deliver_between(
             package.start_location,
             package.end_location
         ):
-            raise Exception("Route cannot deliver this package")
+            raise ValueError("Route cannot deliver this package")
 
         route.add_package(package.package_id)
         package.route_id = route.route_id
@@ -52,10 +52,10 @@ class RouteService:
         route = self.get_route(route_id)
 
         if route.truck_id is not None:
-            raise Exception("Route already has a truck")
+            raise ValueError("Route already has a truck")
 
         if truck.assigned_route is not None:
-            raise Exception("Truck already assigned")
+            raise ValueError("Truck already assigned")
 
         route.assign_truck(truck.vehicle_id)
         truck.assigned_route = route.route_id
