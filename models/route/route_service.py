@@ -1,6 +1,5 @@
 from models.route.route import Route
 from models.route.route_status import RouteStatus
-from core.application_data import ApplicationData
 class RouteService:
     
     ### Handles all business logic related to routes
@@ -9,34 +8,31 @@ class RouteService:
     def __init__(self, app_data):
         self.app_data = app_data
 
-    def create_route(self, route_id: int, stops: list):
-        if route_id in self.app_data.routes:
-            raise Exception("Route already exists")
-
+    def create_route(self, stops: list):
+        route_id = self.app_data.generate_route_id()
+        
         route = Route(route_id, stops)
+        
         self.app_data.add_route(route)
-        self.app_data.routes[route_id] = route
-
         return route
 
     def get_route(self, route_id: int):
-        if route_id not in self.app_data.routes:
-            raise Exception("Route not found")
-
-        return self.app_data.routes[route_id]
+        return self.app_data.find_route(route_id)
+    
+    def get_all_routes(self):
+        return list(self.app_data.routes.values())
 
     def find_routes_for_package(self, package):
-        matching_routes = []
 
-        for route in self.app_data.routes.values():
+        return [
+            route
+            for route in self.app_data.routes.values()
             if route.can_deliver_between(
                 package.start_location,
                 package.end_location
-            ):
-                matching_routes.append(route)
-
-        return matching_routes
-
+            )
+        ]
+        
     def assign_package_to_route(self, package, route_id: int):
         route = self.get_route(route_id)
 
@@ -64,16 +60,14 @@ class RouteService:
         route.assign_truck(truck.vehicle_id)
         truck.assigned_route = route.route_id
 
-    def get_all_routes(self):
-        return list(self.app_data.routes.values())
-    
-    
-    # TODO add logic to prevent starting a completed route because right now this would allow COMPLETED -> IN_PROGRESS
     def start_route(self, route_id: int):
         route = self.get_route(route_id)
         
         if route.truck_id is None:
             raise ValueError("Cannot start a route without a truck assigned to it")
+        
+        if route.status == RouteStatus.COMPLETED:
+            raise ValueError("Cannot start a route that is completed")
         
         route.status = RouteStatus.IN_PROGRESS
         
@@ -81,15 +75,16 @@ class RouteService:
     def complete_route(self, route_id: int):
         route = self.get_route(route_id)
         
-        # TODO this works even if route was never started 
+        if route.status != RouteStatus.IN_PROGRESS:
+            raise ValueError("Only routes in progress can be completed")
+        
         route.status = RouteStatus.COMPLETED
         
-        
-    # TODO Implement    
     def get_routes_by_status(self, status: RouteStatus):
-        pass
-    
-    # TODO
-    # route_service.get_routes_by_status(
-    # RouteStatus.IN_PROGRESS
-    # )
+        return [
+            route
+            for route in self.app_data.routes.values()
+            if route.status == status
+        ]
+    def get_routes_in_progress(self):
+        return self.get_routes_by_status(RouteStatus.IN_PROGRESS)

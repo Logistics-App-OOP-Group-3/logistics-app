@@ -1,79 +1,60 @@
-from models.vehicle import Vehicle
 
 #TODO : import model classes
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from models.route.route import Route 
 
 # This class holds all objects from our models classes
-# And is reponsible for creating UID's
+# Most of the methods about bussiness logic should be defined here
 class ApplicationData:
     def __init__(self):
         self._id_package = 0 # UID for creating package
         self._id_routes = 0   # UID for creating route
-        self._packages: dict[int, object] = dict()
-        self._routes: dict[int,Route] = dict()
-        self._vehicles: dict[int, Vehicle] = dict()
-        self._load_vehicle_database()
         
-    @property             # vehicles
-    def vehicles(self):
-        return tuple(self._vehicles.values())
+        self._packages: dict[int, object] = dict()
+        self._routes: dict[int,object] = dict()
+        self._vehicles: dict[int, object] = dict()
+        
+
+#TODO: Create interface of methods for the command classes
     
-# ID GENERATORS
-    def generate_package_id(self):
-        self._id_package += 1
-        return self._id_package
-    def generate_route_id(self):
-        self._id_routes += 1
-        return self._id_routes
-    
-# FIND METHODS
-    def find_package(self, id:int) -> object: #TODO: object -> Package
+    def find_package(self, id:int) -> object: #TODO:
         if id not in self._packages:
             raise ValueError(f"Package id: {id} cannot be found in the system.")
         return self._packages[id]
     
-    def find_route(self, id:int) -> Route:
+    def find_route(self, id:int) -> object: #TODO:
         if id not in self._routes:
             raise ValueError(f"Route id: {id} cannt be found in the system.")
         return self._routes[id]
     
-    def find_vehicle(self, id:int):
-        if id not in self._vehicles:
-            raise ValueError(f"Vehicle id: {id} cannot be found in the system.")
-
-# ADD METHODS
-    # def add_package(self, package): #TODO
-    #     self._package[package.id] = package
+    def create_package(self) -> object: #TODO: 
+        id = self._generate_package_id
     
-    def add_route(self, route: Route):
-        self._routes[route.route_id] = route
-    
-    def add_vehicle(self, vehicle: Vehicle):
-        self._vehicles[vehicle.id] = vehicle 
-    
-# LOAD DB FROM INITIALIZER METHODS
-    def _load_vehicle_database(self):
-        for vehicle_model_line in Vehicle.vehicles_csv_line:
-            vehicle_model_range, *params = vehicle_model_line.split(',')
-            start, end = vehicle_model_range.split('-')
-            for i in range(int(start), int(end) + 1):
-                vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
-                self.add_vehicle(vehicle)
-      
-# Methods for loading models from files          
-    # def _load_route_database(self):
-    #     pass
-    # def _load_package_database(self):
-    #     pass
-
+        package = None #TODO: delete this line
+        #package = Package() #TODO: add args
+        return package
         
-    
+    def create_route(self, starting_location, delivery_locations:list[object]) -> object: #TODO:
+        id = self._generate_route_id
 
+        route = None #TODO: delete this line
+        # route = Route()#TODO: add args
+        return route
+    
+    def info_not_assigned_packages(self) -> str:
+        result = []
+        result.append("List of unassigned packages:")
+        for id, package in self._packages:
+            if package.status == "NotAssigned":
+                result.append(f" Package: {id} at {package.current_location} city")
+        return '\n'.join(result)
     
     
-
+    def _generate_package_id(self):
+        self._id_package += 1
+        return self._id_package
+    
+    def _generate_route_id(self):
+        self._id_routes += 1
+        return self._id_routes
     
     
     
