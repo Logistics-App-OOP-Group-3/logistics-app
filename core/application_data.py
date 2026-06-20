@@ -64,6 +64,15 @@ class ApplicationData:
 
         
     
+        for vehicle_model_line in Vehicle.vehicles_csv_line:
+            vehicle_model_range, *params = vehicle_model_line.split(',')
+            start, end = vehicle_model_range.split('-')
+            for i in range(int(start), int(end) + 1):
+                vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
+                self.add_vehicle(vehicle)
+
+        
+    
 
     
     
