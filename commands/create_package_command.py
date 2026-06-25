@@ -12,7 +12,7 @@ class CreatePackageCommand(BaseCommand):
         
         start_location = self.params[0]
         end_location = self.params[1]
-        weigth = float(self.params[2])
+        weight = float(self.params[2])
         contact_info = self.params[3]
         
         package = self._package_service.create_package(
