@@ -3,6 +3,7 @@ from models.vehicle import Vehicle
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from models.route.route import Route 
+    from models.package.package import Package
 
 # This class holds all objects from our models classes
 # And is reponsible for creating UID's
@@ -17,7 +18,10 @@ class ApplicationData:
         
     @property             # vehicles
     def vehicles(self):
-        return tuple(self._vehicles.values()) 
+        return tuple(self._vehicles.values())
+    @property
+    def packages(self):
+        return tuple(self._packages.values()) 
     
 # ID GENERATORS
     def generate_package_id(self):
@@ -51,6 +55,9 @@ class ApplicationData:
     
     def add_route(self, route: Route):
         self._routes[route.route_id] = route
+        
+    def add_package(self, package: Package):
+        self._packages[package.package_id] = package
     
     def add_vehicle(self, vehicle: Vehicle):
         self._vehicles[vehicle.id] = vehicle 
