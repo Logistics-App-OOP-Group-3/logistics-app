@@ -51,6 +51,8 @@ class RouteService:
         package.route_id = route.route_id
         package.status = PackageStatus.ASSIGNED
 
+
+    #TODO add capacity check distance check and range check here
     def assign_truck_to_route(self, route_id: int, truck):
         route = self.get_route(route_id)
 
