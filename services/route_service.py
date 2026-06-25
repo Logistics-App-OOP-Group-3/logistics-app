@@ -1,5 +1,7 @@
 from models.route.route import Route
-from models.route.route_status import RouteStatus
+from models.package.package import Package
+from enums.route_status import RouteStatus
+from enums.package_status import PackageStatus
 class RouteService:
     
     ### Handles all business logic related to routes
@@ -22,7 +24,7 @@ class RouteService:
     def get_all_routes(self):
         return list(self.app_data.routes.values())
 
-    def find_routes_for_package(self, package):
+    def find_routes_for_package(self, package: Package):
 
         return [
             route
@@ -33,7 +35,7 @@ class RouteService:
             )
         ]
         
-    def assign_package_to_route(self, package, route_id: int):
+    def assign_package_to_route(self, package: Package, route_id: int):
         route = self.get_route(route_id)
 
         if package.route_id is not None:
@@ -47,6 +49,7 @@ class RouteService:
 
         route.add_package(package.package_id)
         package.route_id = route.route_id
+        package.status = PackageStatus.ASSIGNED
 
     def assign_truck_to_route(self, route_id: int, truck):
         route = self.get_route(route_id)
