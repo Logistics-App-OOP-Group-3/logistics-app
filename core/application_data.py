@@ -11,7 +11,7 @@ class ApplicationData:
     def __init__(self):
         self._id_package = 0 # UID for creating package
         self._id_routes = 0   # UID for creating route
-        self._packages: dict[int, object] = dict()
+        self._packages: dict[int, Package] = dict()
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
         self._load_vehicle_database()
@@ -21,8 +21,10 @@ class ApplicationData:
         return tuple(self._vehicles.values())
     @property
     def packages(self):
-        return tuple(self._packages.values())
-     
+        return self._packages
+    @property
+    def routes(self):
+        return self._routes
     
 # ID GENERATORS
     def generate_package_id(self):
