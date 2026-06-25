@@ -5,10 +5,12 @@ from core.engine import Engine
 from models.route.route_service import RouteService
 
 app_data = ApplicationData()
+for vehicle in app_data._vehicles.values():
+    print(vehicle)
 route_service = RouteService(app_data)
 # system_report = SystemReport(app_data)
 # print(system_report.info_vehicle_storage())
-cmd_factory = CommandFactory(app_data)
-engine = Engine()
+# cmd_factory = CommandFactory(app_data)
+# engine = Engine()
 
-engine.start()
+# engine.start()

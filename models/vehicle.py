@@ -4,13 +4,6 @@ if TYPE_CHECKING:
     from models.route.route import Route
 
 class Vehicle:
-    
-    vehicles_csv_line = [
-        "1001-1010,Scania,42_000,8_000,",
-        "1011-1025,Man,37_000,10_000",
-        "1026-1040,Actros,26_000,13_000"
-    ]
-    
     def __init__(self, id:int, name: str, capacity: int, max_range: int):
         self._id = id
         self._name = name

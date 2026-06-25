@@ -1,8 +1,9 @@
-from models.vehicle import Vehicle
 
 from typing import TYPE_CHECKING
+from core.database_service import DatabaseService
+from models.vehicle import Vehicle
 if TYPE_CHECKING:
-    from models.route.route import Route 
+    from models.route.route import Route
 
 # This class holds all objects from our models classes
 # And is reponsible for creating UID's
@@ -13,6 +14,7 @@ class ApplicationData:
         self._packages: dict[int, object] = dict()
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
+        self._db = DatabaseService()
         self._load_vehicle_database()
         
     @property             # vehicles
@@ -56,7 +58,7 @@ class ApplicationData:
     
 # LOAD DB FROM INITIALIZER METHODS
     def _load_vehicle_database(self):
-        for vehicle_model_line in Vehicle.vehicles_csv_line:
+        for vehicle_model_line in self._db.read_lines('vehicles'):
             vehicle_model_range, *params = vehicle_model_line.split(',')
             start, end = vehicle_model_range.split('-')
             for i in range(int(start), int(end) + 1):

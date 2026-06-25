@@ -1,4 +1,4 @@
-from base.base_command import BaseCommand
+from commands.base.base_command import BaseCommand
 from commands.validation_helper import validate_params_count
 
 class CreateRouteCommand(BaseCommand):
