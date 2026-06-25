@@ -1,5 +1,5 @@
 from models.route.route_stop import RouteStop
-from models.route.route_status import RouteStatus
+from enums.route_status import RouteStatus
 
 
 class Route:

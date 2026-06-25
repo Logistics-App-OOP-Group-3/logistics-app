@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 from core.database_service import DatabaseService
 from models.vehicle import Vehicle
 if TYPE_CHECKING:
-    from models.route.route import Route
+    from models.route.route import Route 
+    from models.package.package import Package
 
 # This class holds all objects from our models classes
 # And is reponsible for creating UID's
@@ -11,7 +12,7 @@ class ApplicationData:
     def __init__(self):
         self._id_package = 0 # UID for creating package
         self._id_routes = 0   # UID for creating route
-        self._packages: dict[int, object] = dict()
+        self._packages: dict[int, Package] = dict()
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
         self._db = DatabaseService()
@@ -19,7 +20,13 @@ class ApplicationData:
         
     @property             # vehicles
     def vehicles(self):
-        return tuple(self._vehicles.values()) 
+        return tuple(self._vehicles.values())
+    @property
+    def packages(self):
+        return self._packages
+    @property
+    def routes(self):
+        return self._routes
     
 # ID GENERATORS
     def generate_package_id(self):
@@ -45,6 +52,7 @@ class ApplicationData:
     def find_vehicle(self, id:int) -> Vehicle:
         if id not in self._vehicles:
             raise ValueError(f"Vehicle id: {id} cannot be found in the system.")
+        return self._vehicles[id]
 
 # ADD METHODS
     # def add_package(self, package): #TODO
@@ -52,6 +60,9 @@ class ApplicationData:
     
     def add_route(self, route: Route):
         self._routes[route.route_id] = route
+        
+    def add_package(self, package: Package):
+        self._packages[package.package_id] = package
     
     def add_vehicle(self, vehicle: Vehicle):
         self._vehicles[vehicle.id] = vehicle 
