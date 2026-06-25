@@ -1,5 +1,6 @@
 from models.route.route_stop import RouteStop
 from enums.route_status import RouteStatus
+from models.route.city_graph import CityGraph
 
 
 class Route:
@@ -50,3 +51,13 @@ class Route:
 
     def __str__(self):
         return f"Route {self.route_id}: {self.start_location} -> {self.end_location}"
+    
+    def calculate_total_distance(self) -> float:
+        total = 0
+
+        for i in range(len(self.stops) - 1):
+            a = self.stops[i]
+            b = self.stops[i + 1]
+            total += CityGraph.distance(a.location, b.location)
+
+        return total
