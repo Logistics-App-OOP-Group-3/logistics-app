@@ -43,6 +43,7 @@ class ApplicationData:
     def find_vehicle(self, id:int) -> Vehicle:
         if id not in self._vehicles:
             raise ValueError(f"Vehicle id: {id} cannot be found in the system.")
+        return self._vehicles[id]
 
 # ADD METHODS
     # def add_package(self, package): #TODO
