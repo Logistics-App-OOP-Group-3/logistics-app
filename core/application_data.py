@@ -21,7 +21,8 @@ class ApplicationData:
         return tuple(self._vehicles.values())
     @property
     def packages(self):
-        return tuple(self._packages.values()) 
+        return tuple(self._packages.values())
+     
     
 # ID GENERATORS
     def generate_package_id(self):
