@@ -1,10 +1,10 @@
 from enums.package_status import PackageStatus
-
+from enums.city import City
 
 
 class Package:
     
-    def __init__(self, package_id: int, start_location: str, end_location: str, weight: float, contact_info: str):
+    def __init__(self, package_id: int, start_location: City, end_location: City, weight: float, contact_info: str):
         self.package_id = package_id
         
         self.start_location = start_location

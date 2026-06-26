@@ -1,4 +1,5 @@
 from datetime import datetime
+from enums.city import City
 
 class RouteStop:
     
@@ -6,7 +7,7 @@ class RouteStop:
     ### - location code (SYD)
     ### - expected arrival/departure time
     
-    def __init__(self, location: str):
+    def __init__(self, location: City):
         self.location = location
 
         self.arrival_time: datetime | None = None

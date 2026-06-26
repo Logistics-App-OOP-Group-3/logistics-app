@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from models.route.route import Route
+    from models.package.package import Package
 
 
 class Vehicle:
@@ -12,7 +13,7 @@ class Vehicle:
         self._max_capacity = capacity
         self._max_range = max_range
 
-        self._packages: dict[int, object] = {}  # TODO: object -> Package
+        self._packages: dict[int, Package] = {}
         self._route: Route | None = None
 
     def add_packages(self, packages):
@@ -21,12 +22,8 @@ class Vehicle:
             self._packages[package.id] = package
 
     def remove_packages(self, city: City):
-        to_remove = []
-
-        for package in self._packages.values():
-            if package.city == city:
-                to_remove.append(package.id)
-
+        to_remove = [p for p in self._packages.values() if p.end_location == city]
+        
         for package_id in to_remove:
             self._packages.pop(package_id)
 

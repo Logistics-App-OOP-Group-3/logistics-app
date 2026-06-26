@@ -32,5 +32,4 @@ class CityGraph:
     def travel_time_hours(cls, distance: float) -> float:
         return distance / cls.SPEED_KMH
     
-    
-
+        
