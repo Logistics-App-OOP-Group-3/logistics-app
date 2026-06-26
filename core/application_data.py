@@ -39,7 +39,7 @@ class ApplicationData:
 
     
 # FIND METHODS
-    def find_package(self, id:int) -> object: #TODO:
+    def find_package(self, id:int) -> Package:
         if id not in self._packages:
             raise ValueError(f"Package id: {id} cannot be found in the system.")
         return self._packages[id]
@@ -55,9 +55,6 @@ class ApplicationData:
         return self._vehicles[id]
 
 # ADD METHODS
-    # def add_package(self, package): #TODO
-    #     self._package[package.id] = package
-    
     def add_route(self, route: Route):
         self._routes[route.route_id] = route
         
