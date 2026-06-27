@@ -36,8 +36,6 @@ class ApplicationData:
         self._id_routes += 1
         return self._id_routes
     
-
-    
 # FIND METHODS
     def find_package(self, id:int) -> Package:
         if id not in self._packages:
@@ -66,6 +64,8 @@ class ApplicationData:
     
 # LOAD DB FROM INITIALIZER METHODS
     def _load_vehicle_database(self):
+        #TODO: refactor to single line records and read assigned_route_id 
+        #TODO: when exporting func is added
         for vehicle_model_line in self._db.read_lines('vehicles'):
             vehicle_model_range, *params = vehicle_model_line.split(',')
             start, end = vehicle_model_range.split('-')

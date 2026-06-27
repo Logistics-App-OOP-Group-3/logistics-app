@@ -15,6 +15,10 @@ class Route:
         if len(stops) < 2:
             raise ValueError("A route must have at least two stops.")
 
+    #TODO: encapsulate
+    #TODO: Adding total_distance attribute will simplify outside logic
+    #TODO: Also assigning expected arival times on creation
+    #TODO: Departure time can be simply 30 min or 1h for loading/unloading
         self.route_id = route_id
         self.stops = stops
         
@@ -49,7 +53,8 @@ class Route:
         if package_id not in self.package_ids:
             self.package_ids.append(package_id)
 
-    def assign_truck(self, truck_id: int):
+    #TODO: property ?
+    def assign_truck(self, truck_id: int): 
         self.truck_id = truck_id
 
     def calculate_total_distance(self) -> int:

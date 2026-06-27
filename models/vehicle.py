@@ -12,9 +12,8 @@ class Vehicle:
         self._name = name
         self._max_capacity = capacity
         self._max_range = max_range
-
         self._packages: dict[int, Package] = {}
-        self._route: Route | None = None
+        self._route_id: int | None = None
 
     def add_packages(self, packages):
         """Packages arg can be single element list for single package"""
@@ -27,34 +26,30 @@ class Vehicle:
         for package_id in to_remove:
             self._packages.pop(package_id)
 
-    @property  # calculated
+    @property                       # calculated
     def remaining_capacity(self):
         return self._max_capacity - sum(
             package.weight for package in self._packages.values()
         )
-
-    @property  # vehicle_id
+    @property                       # vehicle_id
     def vehicle_id(self):
         return self._vehicle_id
-
-    @property  # name
+    @property                       # name
     def name(self):
         return self._name
-
-    @property  # capacity
+    @property                       # capacity
     def capacity(self):
         return self._max_capacity
-
-    @property  # max_range
+    @property                       # max_range
     def max_range(self):
         return self._max_range
+    @property                       # route_id
+    def route_id(self):
+        return self._route_id
+    @route_id.setter                # route_id
+    def route_id(self, value: int):
+        self._route_id = value
 
-    @property  # route
-    def route(self):
-        return self._route
-
-    def assign_route(self, route):
-        self._route = route
 
     @classmethod
     def from_csv(cls, input_line: str):

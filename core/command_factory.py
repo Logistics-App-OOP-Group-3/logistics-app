@@ -11,12 +11,19 @@ if TYPE_CHECKING:
     from core.application_data import ApplicationData
     from services.route_service import RouteService
     from services.package_service import PackageService
+    from services.vehicle_service import VehicleService
 
 class CommandFactory:
-    def __init__(self, data: ApplicationData, route_service: RouteService, package_service: PackageService): #TODO: Add package service
-        self._app_data = data
+    def __init__(self,
+                 app_data: ApplicationData,
+                 route_service: RouteService,
+                 package_service: PackageService,
+                 vehicle_service: VehicleService): 
+        
+        self._app_data = app_data
         self._route_service = route_service
         self._package_service = package_service
+        self._vehicle_service = vehicle_service
         
         
     def create(self, input_line:str):
@@ -27,7 +34,7 @@ class CommandFactory:
         if cmd == "createpackage":
             return CreatePackageCommand(params, self._app_data, self._package_service, self._route_service)
         if cmd == "createroute":
-            return CreateRouteCommand(params, self._app_data, self._route_service)
+            return CreateRouteCommand(params, self._app_data, self._route_service, self._vehicle_service)
         if cmd == "":
             pass
         if cmd == "":
