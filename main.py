@@ -6,6 +6,12 @@ from services.route_service import RouteService
 from services.package_service import PackageService
 from services.vehicle_service import VehicleService
 
+"""
+    Ground Rules:
+"""
+
+
+
 # app_data = ApplicationData()
 # route_service = RouteService(app_data)
 # package_service = PackageService(app_data)
@@ -18,19 +24,17 @@ from services.vehicle_service import VehicleService
 # engine = Engine(cmd_factory)
 
 # engine.start()
+# from models.package.package import Package
+# from enums.city import City 
 
-from models.route.route_stop import RouteStop
-from models.route.route import Route
-from enums.city import City
-rs1 = RouteStop(City.BRI)
-rs2 = RouteStop(City.SYD)
-rs3 = RouteStop(City.MEL)
-rs4 = RouteStop(City.ADL)
+# p1 = Package(1, City.MEL, City.ADL, 100, "Bat mincho izvestniq")
+# p2 = Package(2, City.MEL, City.ADL, 100, "Bat mincho izvestniq")
 
-r = Route(1,[rs1,rs2,rs3,rs4])
+# app_data = ApplicationData()
 
-print(r)
-
+# app_data.hubs[0].add_multiple_packages([p1,p2])
+# for h in app_data.hubs:
+#     print(h)
 
 
 

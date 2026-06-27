@@ -145,7 +145,10 @@ class Route:
                 arrival_time
                 + timedelta(hours=stop_duration_hours)
             )
-
+    def _calculate_stops_capacity(self):
+        """ Calculate stop capacity after unloading """
+        
+    
     def _calculate_total_distance(self) -> int:
         """ Sum distance between each route stop """
         total = 0

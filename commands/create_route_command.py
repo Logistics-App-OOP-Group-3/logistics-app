@@ -19,6 +19,8 @@ class CreateRouteCommand(BaseCommand):
         SEACH for available vehicle  (vehicle_service)
         DISCARD route if no vehicle to complete it AND raise error
         TODO: add packages
+        add packages from first stop that can be delivered by current route
+        
         
         """
         

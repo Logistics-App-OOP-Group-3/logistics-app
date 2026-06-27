@@ -2,6 +2,8 @@
 from typing import TYPE_CHECKING
 from core.database_service import DatabaseService
 from models.vehicle import Vehicle
+from models.hub import Hub
+from enums.city import City
 if TYPE_CHECKING:
     from models.route.route import Route 
     from models.package.package import Package
@@ -15,18 +17,26 @@ class ApplicationData:
         self._packages: dict[int, Package] = dict()
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
+        self._hubs: dict[City, Hub] = dict()
         self._db = DatabaseService()
         self._load_vehicle_database()
+        self._load_hubs_database()
         
-    @property             # vehicles
-    def vehicles(self):
-        return tuple(self._vehicles.values())
+        
+
     @property
     def packages(self):
         return self._packages
     @property
     def routes(self):
         return self._routes
+    @property
+    def vehicles(self):
+        return tuple(self._vehicles.values()) 
+    @property
+    def hubs(self):
+        return tuple(self._hubs.values())
+
     
 # ID GENERATORS
     def generate_package_id(self):
@@ -39,18 +49,23 @@ class ApplicationData:
 # FIND METHODS
     def find_package(self, id:int) -> Package:
         if id not in self._packages:
-            raise ValueError(f"Package id: {id} cannot be found in the system.")
+            raise ValueError(f"Package id: {id} cannot be found in the system!")
         return self._packages[id]
     
     def find_route(self, id:int) -> Route:
         if id not in self._routes:
-            raise ValueError(f"Route id: {id} cannt be found in the system.")
+            raise ValueError(f"Route id: {id} cannt be found in the system!")
         return self._routes[id]
     
     def find_vehicle(self, id:int) -> Vehicle:
         if id not in self._vehicles:
-            raise ValueError(f"Vehicle id: {id} cannot be found in the system.")
+            raise ValueError(f"Vehicle id: {id} cannot be found in the system!")
         return self._vehicles[id]
+    
+    def find_hub(self, city: City):
+        if city not in self._hubs:
+            raise ValueError(f"Hub in City: {city.value} cannot be found in the system!")
+        return self._hubs[city]
 
 # ADD METHODS
     def add_route(self, route: Route):
@@ -60,7 +75,7 @@ class ApplicationData:
         self._packages[package.package_id] = package
     
     def add_vehicle(self, vehicle: Vehicle):
-        self._vehicles[vehicle.id] = vehicle 
+        self._vehicles[vehicle.vehicle_id] = vehicle 
     
 # LOAD DB FROM INITIALIZER METHODS
     def _load_vehicle_database(self):
@@ -72,6 +87,13 @@ class ApplicationData:
             for i in range(int(start), int(end) + 1):
                 vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
                 self.add_vehicle(vehicle)
+    
+    def _load_hubs_database(self):
+        """Currently initialize hubs for every city on program startup"""
+        for c in City:
+            self._hubs[c] = Hub(c)
+            
+        
         
     
 

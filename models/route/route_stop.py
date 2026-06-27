@@ -15,6 +15,7 @@ class RouteStop:
 
         self.arrival_time: datetime | None = None
         self.departure_time: datetime | None = None
+        self._available_capacity = 0
 
     def __str__(self):
         return (

@@ -1,5 +1,10 @@
 from os import path
 class DatabaseService:
+    """ 
+    Current database is a file system.
+        method(read_line) provides generic way to read different model files from the data folder
+            model_key is a map to model file name in _DB_FILES
+    """
 
     _DATA_DIR = path.join(path.dirname(__file__), '..', "data")
     _DB_FILES = {
