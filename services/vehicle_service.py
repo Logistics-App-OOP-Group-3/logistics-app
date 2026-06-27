@@ -16,7 +16,7 @@ class VehicleService:
         for vehicle in self._app_data.vehicles:
             if (vehicle.route_id == None
                 and
-                vehicle.max_range < distance
+                vehicle.max_range <= distance
                 ):
                 return vehicle
         

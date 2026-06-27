@@ -11,16 +11,18 @@ class Route:
     ### It stores stops, assigned truck and packages.
     ### It also provides logic for route validation and delivery checks
     
+    MAX_DISTANCE = 13000
+    
     def __init__(self, route_id: int, stops: list[RouteStop]):
         if len(stops) < 2:
             raise ValueError("A route must have at least two stops.")
 
-        #TODO: encapsulate
-        #TODO: Adding total_distance attribute will simplify outside logic
-        #TODO: Also assigning expected arival times on creation
-        #TODO: Departure time can be simply 30 min or 1h for loading/unloading
-        
         #todo: remove todos: All done
+        #TODO: encapsulate                                                     -=- DONE
+        #TODO: Adding total_distance attribute will simplify outside logic     -=- DONE
+        #TODO: Also assigning expected arival times on creation                -=- DONE
+        #TODO: Departure time can be simply 30 min or 1h for loading/unloading -=- DONE
+        
         self._route_id = route_id
         self._vehicle_id = None
         self._packages_ids: list[int] = []
@@ -29,7 +31,7 @@ class Route:
         self._total_distance = self._calculate_total_distance()
         self._calculate_stops_eta(datetime.now())
         
-        
+## PROPERTIES
     @property                         # route_id
     def route_id(self):
         return self._route_id
@@ -63,7 +65,12 @@ class Route:
     def locations(self):
         return [stop.location for stop in self._stops]
     
+    #TODO: property ?  -=- DONE
+    # def assign_truck(self, truck_id: int): 
+    #     self.truck_id = truck_id
 
+
+## PUBLIC METHODS
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
         if start_location not in self.locations:
             return False
@@ -73,16 +80,35 @@ class Route:
 
         return self.locations.index(start_location) < self.locations.index(end_location)
 
+
     def add_package(self, package_id: int):
         if package_id not in self._packages_ids: #TODO: to many list index search overhead/ since we ignore duplicate we can simply use set
             self._packages_ids.append(package_id)
 
-    #TODO: property ?
-    # def assign_truck(self, truck_id: int): 
-    #     self.truck_id = truck_id
 
+    def get_current_stop(self, current_time: datetime):
+        current_stop = None
+
+        # find the last stop reached by the current time
+        for stop in self.stops:
+            if (
+                stop.arrival_time is not None
+                and stop.arrival_time <= current_time
+            ):
+                current_stop = stop
+            else:
+                break
+
+        return current_stop
+
+## PRIVATE METHODS
+    def __str__(self):
+        return (
+            f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n"
+            f"{'\n'.join(str(stop) for stop in self._stops)}"
+            )
+    
     def _calculate_stops_eta(
-        
         self,
         start_time: datetime,
         stop_duration_hours: int = 1
@@ -120,29 +146,8 @@ class Route:
                 + timedelta(hours=stop_duration_hours)
             )
 
-    def get_current_stop(self, current_time: datetime):
-        current_stop = None
-
-        # find the last stop reached by the current time
-        for stop in self.stops:
-            if (
-                stop.arrival_time is not None
-                and stop.arrival_time <= current_time
-            ):
-                current_stop = stop
-            else:
-                break
-
-        return current_stop
-
-    def __str__(self):
-        return (
-            f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n"
-            f"{'\n'.join(str(stop) for stop in self._stops)}"
-            )
-    
-    
     def _calculate_total_distance(self) -> int:
+        """ Sum distance between each route stop """
         total = 0
         # sum the distance between every two consecutive stops
         for i in range(len(self.stops) - 1):
@@ -150,4 +155,6 @@ class Route:
                 self.stops[i].location,
                 self.stops[i + 1].location
             )
+        if total > self.MAX_DISTANCE:
+            raise ValueError(f"Route distance cannot exceed: {self.MAX_DISTANCE}")
         return total

@@ -14,6 +14,13 @@ class CreateRouteCommand(BaseCommand):
         self._vehicle_service = vehicle_service
 
     def execute(self):
+        """
+        CREATE route with stops      (route_service)[init all stop departure & arival time]
+        SEACH for available vehicle  (vehicle_service)
+        DISCARD route if no vehicle to complete it AND raise error
+        TODO: add packages
+        
+        """
         
         stops = [
             RouteStop(location)
@@ -21,13 +28,14 @@ class CreateRouteCommand(BaseCommand):
         ]
 
         route = self._route_service.create_route(stops)
-        # after creating route check if it can be completed
-        # before adding it to app_data 
-        # discard it if not, and create new one
-        # route_distance = route.calculate_total_distance()
         vehicle = self._vehicle_service.available_vehicle_for_distance(route.total_distance)
+        
         if not vehicle:
-            raise ValueError(f"Cannot currently complete route with distance[{route.total_distance}]")
+            raise ValueError(
+                f"Cannot currently complete route.\n"
+                f" -No vehicle available to cover route distance: [{route.total_distance}]"
+                )
+            
         self._route_service.assign_truck_to_route(route, vehicle)
         
         #TODO: assign packages to route
