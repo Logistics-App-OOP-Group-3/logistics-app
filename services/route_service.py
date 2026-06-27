@@ -1,34 +1,39 @@
 from models.route.route import Route
-from models.package.package import Package
 from enums.route_status import RouteStatus
 from enums.package_status import PackageStatus
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from models.package.package import Package
+    from core.application_data import ApplicationData
+    from models.vehicle import Vehicle
+
 class RouteService:
     
     ### Handles all business logic related to routes
     ### Respponsible for creating routes, finding matching routes for packages and assigning packages and trucks
     
-    def __init__(self, app_data):
-        self.app_data = app_data
+    def __init__(self, app_data: ApplicationData):
+        self._app_data = app_data
 
     def create_route(self, stops: list):
-        route_id = self.app_data.generate_route_id()
+        route_id = self._app_data.generate_route_id()
         
         route = Route(route_id, stops)
-        
-        self.app_data.add_route(route)
+          
         return route
 
-    def get_route(self, route_id: int):
-        return self.app_data.find_route(route_id)
+    def get_route(self, route_id: int) -> Route:
+        return self._app_data.find_route(route_id)
     
     def get_all_routes(self):
-        return list(self.app_data.routes.values())
+        return list(self._app_data.routes.values())
 
     def find_routes_for_package(self, package: Package):
 
         return [
             route
-            for route in self.app_data.routes.values()
+            for route in self._app_data.routes.values()
             if route.can_deliver_between(
                 package.start_location,
                 package.end_location
@@ -53,17 +58,19 @@ class RouteService:
 
 
     #TODO add capacity check distance check and range check here
-    def assign_truck_to_route(self, route_id: int, truck):
-        route = self.get_route(route_id)
-
+    # correction:  only make sure id's are updated
+    def assign_truck_to_route(self, route: Route, vehicle: Vehicle):
+        
         if route.truck_id is not None:
             raise ValueError("Route already has a truck")
-
-        if truck.assigned_route is not None:
+        
+        if vehicle.route_id is not None:
             raise ValueError("Truck already assigned")
 
-        route.assign_truck(truck.vehicle_id)
-        truck.assigned_route = route.route_id
+        route.assign_truck(vehicle.vehicle_id)
+        vehicle.route_id = route.route_id
+        
+
 
     def start_route(self, route_id: int):
         route = self.get_route(route_id)
@@ -88,7 +95,7 @@ class RouteService:
     def get_routes_by_status(self, status: RouteStatus):
         return [
             route
-            for route in self.app_data.routes.values()
+            for route in self._app_data.routes.values()
             if route.status == status
         ]
     def get_routes_in_progress(self):
