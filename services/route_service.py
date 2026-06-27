@@ -61,13 +61,13 @@ class RouteService:
     # correction:  only make sure id's are updated
     def assign_truck_to_route(self, route: Route, vehicle: Vehicle):
         
-        if route.truck_id is not None:
+        if route.vehicle_id is not None:
             raise ValueError("Route already has a truck")
         
         if vehicle.route_id is not None:
             raise ValueError("Truck already assigned")
 
-        route.assign_truck(vehicle.vehicle_id)
+        route.vehicle_id = vehicle.vehicle_id
         vehicle.route_id = route.route_id
         
 

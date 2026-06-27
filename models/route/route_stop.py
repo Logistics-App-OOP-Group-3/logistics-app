@@ -1,5 +1,8 @@
-from datetime import datetime
-from enums.city import City
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from enums.city import City
 
 class RouteStop:
     
@@ -15,11 +18,11 @@ class RouteStop:
 
     def __str__(self):
         return (
-            f"{self.location} "
-            f"(arr: {self.arrival_time:%d/%m/%Y %H:%M} | "
-            f"dep: {self.departure_time:%d/%m/%Y %H:%M})"
+            f"{self.location.name} "
+            f"[arr: {self.arrival_time:%d/%m/%Y %H:%M} | "
+            f"dep: {self.departure_time:%d/%m/%Y %H:%M}]"
             if self.arrival_time and self.departure_time
-            else f"{self.location} (time not calculated)"
+            else f"{self.location.name} (time not calculated)"
         )
     
 # Example Usage of routeStop

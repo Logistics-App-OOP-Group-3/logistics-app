@@ -24,10 +24,10 @@ class CreateRouteCommand(BaseCommand):
         # after creating route check if it can be completed
         # before adding it to app_data 
         # discard it if not, and create new one
-        route_distance = route.calculate_total_distance()
-        vehicle = self._vehicle_service.available_vehicle_for_distance(route_distance)
+        # route_distance = route.calculate_total_distance()
+        vehicle = self._vehicle_service.available_vehicle_for_distance(route.total_distance)
         if not vehicle:
-            raise ValueError(f"Cannot currently complete route with distance[{route_distance}]")
+            raise ValueError(f"Cannot currently complete route with distance[{route.total_distance}]")
         self._route_service.assign_truck_to_route(route, vehicle)
         
         #TODO: assign packages to route
@@ -35,7 +35,7 @@ class CreateRouteCommand(BaseCommand):
         self.app_data.add_route(route)
         return (
             f"Route created successfully.\n"
-            f"Route ID: {route.route_id}\n"
-            f"Vehicle ID: {vehicle.vehicle_id}"
+            f"{route}"
+            f"Vehicle ID: {vehicle.vehicle_id}\n"
             f"Stops: {' -> '.join(route.locations)}"
         )

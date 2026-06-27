@@ -15,30 +15,54 @@ class Route:
         if len(stops) < 2:
             raise ValueError("A route must have at least two stops.")
 
-    #TODO: encapsulate
-    #TODO: Adding total_distance attribute will simplify outside logic
-    #TODO: Also assigning expected arival times on creation
-    #TODO: Departure time can be simply 30 min or 1h for loading/unloading
-        self.route_id = route_id
-        self.stops = stops
+        #TODO: encapsulate
+        #TODO: Adding total_distance attribute will simplify outside logic
+        #TODO: Also assigning expected arival times on creation
+        #TODO: Departure time can be simply 30 min or 1h for loading/unloading
         
-        # status of route starts as planned
-        self.status = RouteStatus.PLANNED
-
-        self.truck_id = None
-        self.package_ids = []
-
-    @property
+        #todo: remove todos: All done
+        self._route_id = route_id
+        self._vehicle_id = None
+        self._packages_ids: list[int] = []
+        self._status = RouteStatus.PLANNED # status of route starts as planned
+        self._stops: list[RouteStop] = stops
+        self._total_distance = self._calculate_total_distance()
+        self._calculate_stops_eta(datetime.now())
+        
+        
+    @property                         # route_id
+    def route_id(self):
+        return self._route_id
+    @property                         # vehicle_id
+    def vehicle_id(self):
+        return self._vehicle_id
+    @vehicle_id.setter                # vehicle_id
+    def vehicle_id(self, value: int):
+        self._vehicle_id = value
+    @property                         # total_distance
+    def total_distance(self):
+        return self._total_distance
+    @property                         # packages_ids
+    def packages_ids(self): 
+        return tuple(self._packages_ids)
+    @property                         # status
+    def status(self):
+        return self._status
+    #TODO: status setter or other method for status change
+    @property                         # stops
+    def stops(self):
+        return tuple(self._stops)
+    
+    @property                         # calculated
     def start_location(self):
-        return self.stops[0].location
-
-    @property
+        return self._stops[0].location
+    @property                         # calculated
     def end_location(self):
-        return self.stops[-1].location
-
-    @property
+        return self._stops[-1].location
+    @property                         # calculated   
     def locations(self):
-        return [stop.location for stop in self.stops]
+        return [stop.location for stop in self._stops]
+    
 
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
         if start_location not in self.locations:
@@ -50,33 +74,29 @@ class Route:
         return self.locations.index(start_location) < self.locations.index(end_location)
 
     def add_package(self, package_id: int):
-        if package_id not in self.package_ids:
-            self.package_ids.append(package_id)
+        if package_id not in self._packages_ids: #TODO: to many list index search overhead/ since we ignore duplicate we can simply use set
+            self._packages_ids.append(package_id)
 
     #TODO: property ?
-    def assign_truck(self, truck_id: int): 
-        self.truck_id = truck_id
+    # def assign_truck(self, truck_id: int): 
+    #     self.truck_id = truck_id
 
-    def calculate_total_distance(self) -> int:
-        total = 0
-
-        # sum the distance between every two consecutive stops
-        for i in range(len(self.stops) - 1):
-            total += CityGraph.distance(
-                self.stops[i].location,
-                self.stops[i + 1].location
-            )
-
-        return total
-
-    def calculate_eta(
+    def _calculate_stops_eta(
+        
         self,
         start_time: datetime,
         stop_duration_hours: int = 1
     ):
+        """
+        Calculates and assigns all RouteStops:
+            Departure Time
+            Arrival Time
+        param[0] = arival time for first stop
+        param[1] = delay after ariving at one stop and leaving for the next one
+        """
         # first stop is the route starting point
         self.stops[0].arrival_time = start_time
-        self.stops[0].departure_time = start_time
+        self.stops[0].departure_time = start_time + timedelta(hours=stop_duration_hours)
 
         for i in range(1, len(self.stops)):
             previous_stop = self.stops[i - 1]
@@ -116,4 +136,18 @@ class Route:
         return current_stop
 
     def __str__(self):
-        return f"Route {self.route_id}: {self.start_location} -> {self.end_location}"
+        return (
+            f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n"
+            f"{'\n'.join(str(stop) for stop in self._stops)}"
+            )
+    
+    
+    def _calculate_total_distance(self) -> int:
+        total = 0
+        # sum the distance between every two consecutive stops
+        for i in range(len(self.stops) - 1):
+            total += CityGraph.distance(
+                self.stops[i].location,
+                self.stops[i + 1].location
+            )
+        return total
