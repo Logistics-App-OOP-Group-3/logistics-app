@@ -82,7 +82,7 @@ class Route:
 
 
     def add_package(self, package_id: int):
-        if package_id not in self._packages_ids: #TODO: to many list index search overhead/ since we ignore duplicate we can simply use set
+        if package_id not in self._packages_ids: #TODO: to many list index search overhead/ since we ignore duplicate we can simply use set or dict[id,object]
             self._packages_ids.append(package_id)
 
 
@@ -121,12 +121,12 @@ class Route:
         param[1] = delay after ariving at one stop and leaving for the next one
         """
         # first stop is the route starting point
-        self.stops[0].arrival_time = start_time
-        self.stops[0].departure_time = start_time + timedelta(hours=stop_duration_hours)
+        self._stops[0].arrival_time = start_time
+        self._stops[0].departure_time = start_time + timedelta(hours=stop_duration_hours)
 
-        for i in range(1, len(self.stops)):
-            previous_stop = self.stops[i - 1]
-            current_stop = self.stops[i]
+        for i in range(1, len(self._stops)):
+            previous_stop = self._stops[i - 1]
+            current_stop = self._stops[i]
 
             distance = CityGraph.distance(
                 previous_stop.location,
@@ -145,6 +145,7 @@ class Route:
                 arrival_time
                 + timedelta(hours=stop_duration_hours)
             )
+            
     def _calculate_stops_capacity(self):
         """ Calculate stop capacity after unloading """
         
@@ -153,10 +154,10 @@ class Route:
         """ Sum distance between each route stop """
         total = 0
         # sum the distance between every two consecutive stops
-        for i in range(len(self.stops) - 1):
+        for i in range(len(self._stops) - 1):
             total += CityGraph.distance(
-                self.stops[i].location,
-                self.stops[i + 1].location
+                self._stops[i].location,
+                self._stops[i + 1].location
             )
         if total > self.MAX_DISTANCE:
             raise ValueError(f"Route distance cannot exceed: {self.MAX_DISTANCE}")

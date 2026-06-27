@@ -2,6 +2,7 @@ from commands.base.base_command import BaseCommand
 from models.route.route_stop import RouteStop
 from services.route_service import RouteService
 from services.vehicle_service import VehicleService
+import commands.validation_helper as vh
 
 class CreateRouteCommand(BaseCommand):
 
@@ -23,12 +24,12 @@ class CreateRouteCommand(BaseCommand):
         
         
         """
-        
         stops = [
-            RouteStop(location)
-            for location in self.params
-        ]
-
+            RouteStop(vh.try_parse_city(location))
+            for location 
+            in self.params
+            ]
+        
         route = self._route_service.create_route(stops)
         vehicle = self._vehicle_service.available_vehicle_for_distance(route.total_distance)
         
@@ -45,7 +46,6 @@ class CreateRouteCommand(BaseCommand):
         self.app_data.add_route(route)
         return (
             f"Route created successfully.\n"
-            f"{route}"
-            f"Vehicle ID: {vehicle.vehicle_id}\n"
-            f"Stops: {' -> '.join(route.locations)}"
+            f"{route}\n"
+            f"Vehicle ID: {vehicle.vehicle_id}"
         )

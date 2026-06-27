@@ -4,7 +4,7 @@ class City(Enum):
     SYD = "Sydney"
     MEL = "Melbourne"
     ADL = "Adelaide"
-    ASP = "Alice Springs"
+    ASP = "AliceSprings"
     BRI = "Brisbane"
     DAR = "Darwin"
     PER = "Perth"
