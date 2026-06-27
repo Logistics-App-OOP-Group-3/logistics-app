@@ -28,13 +28,22 @@ class Hub:
     def package_count(self):
         return len(self._packages)
 
-## PUBLIC METHODS   
+## PUBLIC METHODS
+    def find_packages_for_locations(self, cities: list[City]) -> list[Package]:
+        """Group packages by: end_locations in param[0]: cities"""
+        return [package
+            for package in self._packages.values()
+            if package.end_location in cities and
+            package.route_id == None]
+        
+
     def add_single_package(self, package: Package):
         if package.package_id not in self._packages: 
             self._packages[package.package_id] = package
             self._packages_weigth += package.weight
             
     def add_multiple_packages(self, packages: list[Package]):
+        """Useless if we straight up delete packages when they get delivered"""
         for package in packages:
             self.add_single_package(package)
     

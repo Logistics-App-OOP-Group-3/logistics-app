@@ -21,8 +21,6 @@ class CreateRouteCommand(BaseCommand):
         DISCARD route if no vehicle to complete it AND raise error
         TODO: add packages
         add packages from first stop that can be delivered by current route
-        
-        
         """
         stops = [
             RouteStop(vh.try_parse_city(location))
@@ -31,7 +29,7 @@ class CreateRouteCommand(BaseCommand):
             ]
         
         route = self._route_service.create_route(stops)
-        vehicle = self._vehicle_service.available_vehicle_for_distance(route.total_distance)
+        vehicle = self._vehicle_service.find_available_vehicle_for_distance(route.total_distance)
         
         if not vehicle:
             raise ValueError(
@@ -40,9 +38,8 @@ class CreateRouteCommand(BaseCommand):
                 )
             
         self._route_service.assign_truck_to_route(route, vehicle)
-        
-        #TODO: assign packages to route
-        
+        self._route_service.load_packages_from_hubs(route, vehicle)
+                        
         self.app_data.add_route(route)
         return (
             f"Route created successfully.\n"

@@ -4,7 +4,6 @@ from models.route.route_stop import RouteStop
 from enums.route_status import RouteStatus
 from models.route.city_graph import CityGraph
 
-
 class Route:
     
     ### Route class represent a delivery route between multiple locations
@@ -25,7 +24,7 @@ class Route:
         
         self._route_id = route_id
         self._vehicle_id = None
-        self._packages_ids: list[int] = []
+        self._packages_ids: set[int] = set() # set > list, since duplicates are ignored
         self._status = RouteStatus.PLANNED # status of route starts as planned
         self._stops: list[RouteStop] = stops
         self._total_distance = self._calculate_total_distance()
@@ -64,14 +63,14 @@ class Route:
     @property                         # calculated   
     def locations(self):
         return [stop.location for stop in self._stops]
-    
-    #TODO: property ?  -=- DONE
-    # def assign_truck(self, truck_id: int): 
-    #     self.truck_id = truck_id
 
 
 ## PUBLIC METHODS
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
+        """More use for createpackage command.
+           CreateRoute finds packets from hubs it visits,
+           instead of checking every single package in the system.
+        """
         if start_location not in self.locations:
             return False
 
@@ -81,10 +80,9 @@ class Route:
         return self.locations.index(start_location) < self.locations.index(end_location)
 
 
-    def add_package(self, package_id: int):
-        if package_id not in self._packages_ids: #TODO: to many list index search overhead/ since we ignore duplicate we can simply use set or dict[id,object]
-            self._packages_ids.append(package_id)
-
+    def add_package(self, package_id: int): 
+        if package_id not in self._packages_ids: #TODO: changed to set, since duplicates are ignored, can throw error if its present
+            self._packages_ids.add(package_id)
 
     def get_current_stop(self, current_time: datetime):
         current_stop = None
@@ -100,6 +98,25 @@ class Route:
                 break
 
         return current_stop
+
+
+    def weight_at_stop(self, stop_index: int) -> int:
+        """Running truck weight after loading/unloading at stop[stop_index].
+           Walks all stops up to and including the given index,
+           summing pick-ups and subtracting drop-offs.
+        """
+        weight = 0
+        for stop in self._stops[:stop_index + 1]:
+            weight += stop.pick_up_weigth
+            weight -= stop.drop_off_weigth
+        return weight
+
+
+    def calculate_stops_capacity(self):
+        """ Calculate truck weigth after each stop """
+        return [self.weight_at_stop(i) for i in range(len(self._stops))]
+
+
 
 ## PRIVATE METHODS
     def __str__(self):
@@ -146,10 +163,6 @@ class Route:
                 + timedelta(hours=stop_duration_hours)
             )
             
-    def _calculate_stops_capacity(self):
-        """ Calculate stop capacity after unloading """
-        
-    
     def _calculate_total_distance(self) -> int:
         """ Sum distance between each route stop """
         total = 0

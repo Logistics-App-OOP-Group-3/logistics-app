@@ -41,6 +41,11 @@ class RouteService:
         ]
         
     def assign_package_to_route(self, package: Package, route_id: int):
+        """
+        Assign package to route only if there is enough space
+        from starting to end point. Accounting for packages that are not
+        currently picked up, but are already assigned.
+        """
         route = self.get_route(route_id)
 
         if package.route_id is not None:
@@ -52,13 +57,57 @@ class RouteService:
         ):
             raise ValueError("Route cannot deliver this package")
 
+        pickup_stop = next(s for s in route.stops if s.location == package.start_location)
+        dropoff_stop = next(s for s in route.stops if s.location == package.end_location)
+        pickup_index = route.stops.index(pickup_stop)
+        dropoff_index = route.stops.index(dropoff_stop)
+        
+        vehicle = self._app_data.find_vehicle(route.vehicle_id)
+        # check for truck capacity between package start & end location
+        # accounting for already assigned packages that are not picked up
+        for i in range(pickup_index, dropoff_index):  
+            if route.weight_at_stop(i) + package.weight > vehicle.capacity:
+                raise ValueError(
+                    f"Package exceeds vehicle capacity at stop {route.stops[i].location.name}"
+                )
+
         route.add_package(package.package_id)
-        package.route_id = route.route_id
-        package.status = PackageStatus.ASSIGNED
+        package.assign_to_route(route.route_id)
+        pickup_stop.add_pick_up_weigth(package.weight)
+        dropoff_stop.add_drop_off_weigth(package.weight)
 
 
-    #TODO add capacity check distance check and range check here
-    # correction:  only make sure id's are updated
+
+    def load_packages_from_hubs(self, route: Route, vehicle: Vehicle):
+        """
+        For each stop, find unassigned packages at that hub
+        destined for any later stop, then load them in acceptance order
+        up to the vehicle's remaining capacity.
+        """
+        stops = route.stops
+
+        for i in range(len(stops) - 1):
+            hub = self._app_data.find_hub(stops[i].location)
+            later_stops = [stop.location for stop in stops[i+1::]]
+            candidates = hub.find_packages_for_locations(later_stops)
+            current_weigth = route.weight_at_stop(i)
+
+            for package in candidates:
+                if current_weigth + package.weight > vehicle.capacity:
+                    continue  # skip this package, maybe next one will fit
+                
+                current_weigth += package.weight
+                pickup_stop = stops[i]
+
+                dropoff_stop = next(s for s in stops if s.location == package.end_location)
+
+                route.add_package(package.package_id)
+                package.assign_to_route(route.route_id)
+                pickup_stop.add_pick_up_weigth(package.weight)
+                dropoff_stop.add_drop_off_weigth(package.weight)
+
+
+
     def assign_truck_to_route(self, route: Route, vehicle: Vehicle):
         
         if route.vehicle_id is not None:
@@ -69,8 +118,6 @@ class RouteService:
 
         route.vehicle_id = vehicle.vehicle_id
         vehicle.route_id = route.route_id
-        
-
 
     def start_route(self, route_id: int):
         route = self.get_route(route_id)

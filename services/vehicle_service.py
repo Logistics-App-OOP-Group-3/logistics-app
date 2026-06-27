@@ -10,7 +10,7 @@ class VehicleService:
     def __init__(self, app_data: ApplicationData):
         self._app_data = app_data
         
-    def available_vehicle_for_distance(self, distance: int) -> Vehicle | None:
+    def find_available_vehicle_for_distance(self, distance: int) -> Vehicle | None:
         """ Return: Vehicle -> available vehicle for this distance
                     None -> no vehicle can cover this distance right now """
         for vehicle in self._app_data.vehicles:

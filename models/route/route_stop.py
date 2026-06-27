@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from datetime import datetime
     from enums.city import City
+    from models.package.package import Package
 
 class RouteStop:
     
@@ -11,11 +12,29 @@ class RouteStop:
     ### - expected arrival/departure time
     
     def __init__(self, location: City):
-        self.location = location
+        self._location = location
 
         self.arrival_time: datetime | None = None
         self.departure_time: datetime | None = None
-        self._available_capacity = 0
+        
+        self._pick_up_weigth = 0
+        self._drop_off_weigth = 0
+    
+    @property
+    def location(self):
+        return self._location
+    
+    @property
+    def pick_up_weigth(self):
+        return self._pick_up_weigth
+    @property
+    def drop_off_weigth(self):
+        return self._drop_off_weigth
+    
+    def add_pick_up_weigth(self, value: int):
+        self._pick_up_weigth += value
+    def add_drop_off_weigth(self, value: int):
+        self._drop_off_weigth += value
 
     def __str__(self):
         return (
