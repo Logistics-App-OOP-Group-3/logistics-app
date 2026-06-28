@@ -17,6 +17,20 @@ from services.vehicle_service import VehicleService
     Use case1: create package, list routes, choose route or leave at hub
 """
 
+"""
+assign_truck_to_route_command.py is currently not usable:
+    Since we dont create routes without trucks (for now)
+
+
+create_package_command.py handles assigning of package
+
+
+create_route_command.py should have 2 version
+    1: where packets get loaded from hubs automatically (current implementation)
+    2: where route is simply created as a logical followup of Use Case 4. 
+    (to add rotting unassigned packages)
+"""
+
 app_data = ApplicationData()
 route_service = RouteService(app_data)
 package_service = PackageService(app_data)
