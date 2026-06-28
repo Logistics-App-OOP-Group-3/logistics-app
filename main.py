@@ -7,7 +7,14 @@ from services.package_service import PackageService
 from services.vehicle_service import VehicleService
 
 """
-    Ground Rules:
+    Use case 5:  package_expected_arival time & location
+        route- stop expected time, last_completed stop
+    Use case 4: list_packages, by route_id | status + location
+    Use case 3: all delivery roots (for now no pending routes for vehicle) 
+                delivery weigth - load & unload at each stop 
+                                  arrival_time
+    Use case2: load packages from hubs 
+    Use case1: create package, list routes, choose route or leave at hub
 """
 
 
