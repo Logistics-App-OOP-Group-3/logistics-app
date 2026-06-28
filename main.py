@@ -17,8 +17,6 @@ from services.vehicle_service import VehicleService
     Use case1: create package, list routes, choose route or leave at hub
 """
 
-
-
 app_data = ApplicationData()
 route_service = RouteService(app_data)
 package_service = PackageService(app_data)
