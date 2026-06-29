@@ -22,4 +22,18 @@ class PackageInfoCommand(BaseCommand):
 
         package = self._package_service.get_package(package_id)
 
-        return str(package)
+        result = [
+            str(package),
+            f'Weight: {package.weight} kg',
+            f'Contact: {package.contact_info}'         
+        ] 
+
+        if package.route_id is None:
+            result.append('Route: Not Assigned')
+        else:
+            result.append(f'Route: {package.route_id}')
+
+        print("\n----- PACKAGE INFO -----")
+        print("\n".join(result))
+
+        return '\n'.join(result)

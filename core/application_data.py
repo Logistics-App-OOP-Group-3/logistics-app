@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING
 from core.database_service import DatabaseService
 from models.vehicle import Vehicle

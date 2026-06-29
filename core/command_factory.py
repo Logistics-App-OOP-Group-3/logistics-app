@@ -1,6 +1,7 @@
 
 from commands.create_package_command import CreatePackageCommand
 from commands.create_route_command import CreateRouteCommand
+from commands.package_info_command import PackageInfoCommand
 
 
 from typing import TYPE_CHECKING
@@ -35,8 +36,8 @@ class CommandFactory:
             return CreatePackageCommand(params, self._app_data, self._package_service, self._route_service)
         if cmd == "createroute":
             return CreateRouteCommand(params, self._app_data, self._route_service, self._vehicle_service)
-        if cmd == "":
-            pass
+        if cmd == "packageinfo":
+            return PackageInfoCommand(params, self._app_data, self._package_service, self._route_service)
         if cmd == "":
             pass
         if cmd == "":

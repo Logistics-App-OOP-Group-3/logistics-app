@@ -25,7 +25,7 @@ class Package:
         self.status = PackageStatus.IN_TRANSIT
         
     def mark_delivered(self):
-        self.stats = PackageStatus.DELIVERED
+        self.status = PackageStatus.DELIVERED
         
     def __str__(self):
         return (

@@ -113,17 +113,20 @@ class Route:
 
 
     def calculate_stops_capacity(self):
-        """ Calculate truck weigth after each stop """
+        """ Calculate truck weight after each stop """
         return [self.weight_at_stop(i) for i in range(len(self._stops))]
 
 
 
 ## PRIVATE METHODS
     def __str__(self):
-        return (
-            f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n"
-            f"{'\n'.join(str(stop) for stop in self._stops)}"
-            )
+
+        result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n"]
+        
+        for index, stop in enumerate(self._stops):
+            result.append(f'{stop} | Truck load: {self.weight_at_stop(index)} kg')
+
+        return '\n'.join(result)
     
     def _calculate_stops_eta(
         self,
