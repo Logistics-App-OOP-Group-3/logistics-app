@@ -7,20 +7,18 @@ import commands.validation_helper as vh
 class CreateRouteCommand(BaseCommand):
 
     def __init__(self, params, app_data, route_service: RouteService, vehicle_service: VehicleService):
-        if len(params) < 2:
-            raise ValueError("A route must have at least two stops")
-
+        vh.validate_params_count(params, 2, "CreateRouteCommand")
         super().__init__(params, app_data)
         self._route_service = route_service
         self._vehicle_service = vehicle_service
+
 
     def execute(self):
         """
         CREATE route with stops      (route_service)[init all stop departure & arival time]
         SEACH for available vehicle  (vehicle_service)
         DISCARD route if no vehicle to complete it AND raise error
-        TODO: add packages
-        add packages from first stop that can be delivered by current route
+        ADD packages from hubs calculating how much is droped off and picked up at each stop
         """
         stops = [
             RouteStop(vh.try_parse_city(location))

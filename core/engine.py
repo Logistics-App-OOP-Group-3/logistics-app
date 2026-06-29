@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     from core.command_factory import CommandFactory
 
 class Engine:
-    def __init__(self, factory):
+    def __init__(self, factory: CommandFactory):
         self._command_factory = factory
 
     def start(self):
@@ -22,3 +22,5 @@ class Engine:
 
             except ValueError as err:
                 print(str(err))
+        
+        self._command_factory._data_repository.save() # save data to files on exit

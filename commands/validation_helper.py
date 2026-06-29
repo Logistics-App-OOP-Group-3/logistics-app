@@ -1,9 +1,10 @@
 from enums.city import City
 
-def validate_params_count(params, expected_count: int):
+def validate_params_count(params, expected_count: int, source: str):
     if len(params) != expected_count:
         raise ValueError(
-            f'Invalid number of arguments. Expected: {expected_count}; received: {len(params)}!')
+            f'Invalid number of parameters passed to: {source}\n'
+            f'  Expected: {expected_count}; received: {len(params)}!')
 
 def try_parse_city(city_value: str):
     try:
