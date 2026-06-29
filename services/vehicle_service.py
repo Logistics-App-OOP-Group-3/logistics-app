@@ -10,6 +10,12 @@ class VehicleService:
     def __init__(self, app_data: ApplicationData):
         self._app_data = app_data
         
+    def create_vehicle(self, params):
+        #TODO: call app_data id gen
+        ...
+        
+        
+        
     def find_available_vehicle_for_distance(self, distance: int) -> Vehicle | None:
         """ Return: Vehicle -> available vehicle for this distance
                     None -> no vehicle can cover this distance right now """
@@ -20,4 +26,4 @@ class VehicleService:
                 ):
                 return vehicle
         
-        return None   
+        return None

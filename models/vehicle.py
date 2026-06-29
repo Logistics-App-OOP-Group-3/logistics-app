@@ -1,36 +1,16 @@
 from enums.city import City
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from models.route.route import Route
-    from models.package.package import Package
 
 
 class Vehicle:
+    #TODO: Add current location in init params
     def __init__(self, vehicle_id: int, name: str, capacity: int, max_range: int):
         self._vehicle_id = vehicle_id
         self._name = name
         self._max_capacity = capacity
         self._max_range = max_range
-        self._packages: dict[int, Package] = {}
         self._route_id: int | None = None
+        # self._current_location: City = city_location
 
-    def add_packages(self, packages):
-        """Packages arg can be single element list for single package"""
-        for package in packages:
-            self._packages[package.id] = package
-
-    def remove_packages(self, city: City):
-        to_remove = [p for p in self._packages.values() if p.end_location == city]
-        
-        for package_id in to_remove:
-            self._packages.pop(package_id)
-
-    @property                       # calculated
-    def remaining_capacity(self):
-        return self._max_capacity - sum(
-            package.weight for package in self._packages.values()
-        )
     @property                       # vehicle_id
     def vehicle_id(self):
         return self._vehicle_id
@@ -49,18 +29,13 @@ class Vehicle:
     @route_id.setter                # route_id
     def route_id(self, value: int):
         self._route_id = value
+    # @property                       # current_location
+    # def current_location(self):
+    #     return self._current_location
+    # @current_location.setter
+    # def current_location(self, value: City):
+    #     self._current_location = value
 
-
-    @classmethod
-    def from_csv(cls, input_line: str):
-        tokens = input_line.split(',')
-
-        vehicle_id = int(tokens[0])
-        name = tokens[1]
-        capacity = int(tokens[2])
-        max_range = int(tokens[3])
-
-        return cls(vehicle_id, name, capacity, max_range)
 
     # Test implementation, not for Business logic
     def __str__(self):
@@ -69,3 +44,19 @@ class Vehicle:
             f"MaxCapacity: {self.capacity} "
             f"MaxKMRange: {self.max_range}"
         )
+        
+    @classmethod
+    def from_csv(cls, input_line: str) -> Vehicle:
+        """ Create vehicle from csv line """
+        tokens = input_line.split(',')
+
+        vehicle_id = int(tokens[0])
+        name = tokens[1]
+        capacity = int(tokens[2])
+        max_range = int(tokens[3])
+
+        return cls(vehicle_id, name, capacity, max_range)
+    
+    def to_csv(self) -> str:
+        """ Serialize vehicle to csv format """
+        return f'{self._vehicle_id},{self._name},{self._max_capacity},{self._max_range}'

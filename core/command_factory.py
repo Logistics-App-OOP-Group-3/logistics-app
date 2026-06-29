@@ -3,6 +3,10 @@ from commands.create_package_command import CreatePackageCommand
 from commands.create_route_command import CreateRouteCommand
 from commands.package_info_command import PackageInfoCommand
 from commands.route_info_command import RouteInfoCommand
+from services.route_service import RouteService
+from services.package_service import PackageService
+from services.vehicle_service import VehicleService
+from core.data_repository import DataRepository
 
 
 from typing import TYPE_CHECKING
@@ -11,22 +15,16 @@ from typing import TYPE_CHECKING
 # False: during program execution
 if TYPE_CHECKING:
     from core.application_data import ApplicationData
-    from services.route_service import RouteService
-    from services.package_service import PackageService
-    from services.vehicle_service import VehicleService
 
 class CommandFactory:
-    def __init__(self,
-                 app_data: ApplicationData,
-                 route_service: RouteService,
-                 package_service: PackageService,
-                 vehicle_service: VehicleService): 
-        
+    def __init__(self, app_data: ApplicationData):
+    
         self._app_data = app_data
-        self._route_service = route_service
-        self._package_service = package_service
-        self._vehicle_service = vehicle_service
-        
+        self._route_service = RouteService(app_data)
+        self._package_service = PackageService(app_data)
+        self._vehicle_service = VehicleService(app_data)
+        self._data_repository = DataRepository(app_data)
+        self._data_repository.load()
         
     def create(self, input_line:str):
         cmd, *params = input_line.split()

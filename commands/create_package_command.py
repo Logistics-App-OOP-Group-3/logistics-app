@@ -15,7 +15,7 @@ class CreatePackageCommand(BaseCommand):
         package_service: PackageService,
         route_service :RouteService
     ):
-        val_help.validate_params_count(params, 4)
+        val_help.validate_params_count(params, 4, "CreatePackageCommand")
         super().__init__(params, app_data)
         self._package_service = package_service
         self._route_service = route_service

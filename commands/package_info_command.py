@@ -6,7 +6,7 @@ class PackageInfoCommand(BaseCommand):
 
     def __init__(self, params, app_data, package_service):
         # Expected input: <package_id>
-        validate_params_count(params, 1)
+        validate_params_count(params, 1, "PackageInfoCommand")
         super().__init__(params, app_data)
         self._package_service = package_service
 

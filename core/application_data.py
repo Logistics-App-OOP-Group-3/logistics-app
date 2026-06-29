@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
-from core.database_service import DatabaseService
 from models.vehicle import Vehicle
 from models.hub import Hub
 from enums.city import City
+from services.vehicle_service import VehicleService
 if TYPE_CHECKING:
     from models.route.route import Route 
     from models.package.package import Package
@@ -12,17 +12,15 @@ if TYPE_CHECKING:
 class ApplicationData:
     def __init__(self):
         self._id_package = 0 # UID for creating package
-        self._id_routes = 0   # UID for creating route
+        self._id_route = 0   # UID for creating route
+        self._id_vehicle = 0 # UID for creating vehicle
         self._packages: dict[int, Package] = dict()
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
         self._hubs: dict[City, Hub] = dict()
-        self._db = DatabaseService()
-        self._load_vehicle_database()
-        self._load_hubs_database()
+        # self._load_vehicle_database()
+        # self._load_hubs_database()
         
-        
-
     @property
     def packages(self):
         return self._packages
@@ -35,15 +33,22 @@ class ApplicationData:
     @property
     def hubs(self):
         return tuple(self._hubs.values())
-
+    
+    def sync_ids(self, max_package_id: int, max_route_id: int, max_vehicle_id: int):
+        self._id_package = max_package_id
+        self._id_route = max_route_id
+        self._id_vehicle = max_vehicle_id
     
 # ID GENERATORS
     def generate_package_id(self):
         self._id_package += 1
         return self._id_package
     def generate_route_id(self):
-        self._id_routes += 1
-        return self._id_routes
+        self._id_route += 1
+        return self._id_route
+    def generate_vehicle_id(self):
+        self._id_vehicle += 1
+        return self._id_vehicle
     
 # FIND METHODS
     def find_package(self, id:int) -> Package:
@@ -74,23 +79,12 @@ class ApplicationData:
         self._packages[package.package_id] = package
     
     def add_vehicle(self, vehicle: Vehicle):
-        self._vehicles[vehicle.vehicle_id] = vehicle 
+        self._vehicles[vehicle.vehicle_id] = vehicle
     
-# LOAD DB FROM INITIALIZER METHODS
-    def _load_vehicle_database(self):
-        #TODO: refactor to single line records and read assigned_route_id 
-        #TODO: when exporting func is added
-        for vehicle_model_line in self._db.read_lines('vehicles'):
-            vehicle_model_range, *params = vehicle_model_line.split(',')
-            start, end = vehicle_model_range.split('-')
-            for i in range(int(start), int(end) + 1):
-                vehicle = Vehicle.from_csv(f"{i},{','.join(params)}")
-                self.add_vehicle(vehicle)
+    def add_hub(self, hub: Hub):
+        self._hubs[hub.city] = hub
     
-    def _load_hubs_database(self):
-        """Currently initialize hubs for every city on program startup"""
-        for c in City:
-            self._hubs[c] = Hub(c)
+
             
         
         
