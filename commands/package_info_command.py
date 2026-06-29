@@ -33,7 +33,4 @@ class PackageInfoCommand(BaseCommand):
         else:
             result.append(f'Route: {package.route_id}')
 
-        print("\n----- PACKAGE INFO -----")
-        print("\n".join(result))
-
         return '\n'.join(result)
