@@ -16,7 +16,7 @@ class ApplicationData:
     def __init__(self):
         self._id_package = 0 # UID for creating package
         self._id_route = 0   # UID for creating route
-        self._id_vehicle = 1040 # UID for creating vehicle because we start from predifined vehicles already
+        self._id_vehicle = 0 # UID for creating vehicle because we start from predifined vehicles already
         self._packages: dict[int, Package] = dict()
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
