@@ -1,7 +1,11 @@
+from __future__ import annotations 
 from typing import TYPE_CHECKING
 from models.vehicle import Vehicle
 from models.hub import Hub
 from enums.city import City
+
+
+
 if TYPE_CHECKING:
     from models.route.route import Route 
     from models.package.package import Package

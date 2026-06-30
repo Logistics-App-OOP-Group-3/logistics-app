@@ -1,3 +1,4 @@
+from __future__ import annotations
 from commands.validation_helper import validate_params_count
 from abc import ABC, abstractmethod
 

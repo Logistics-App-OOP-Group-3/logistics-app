@@ -1,3 +1,4 @@
+from __future__ import annotations
 from models.route.route import Route
 from enums.route_status import RouteStatus
 from enums.package_status import PackageStatus

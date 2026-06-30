@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enums.city import City
 
 
@@ -46,7 +47,7 @@ class Vehicle:
         )
         
     @classmethod
-    def from_csv(cls, input_line: str) -> "Vehicle":
+    def from_csv(cls, input_line: str) -> Vehicle:
         """ Create vehicle from csv line """
         tokens = input_line.split(',')
 
