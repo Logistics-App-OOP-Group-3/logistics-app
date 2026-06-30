@@ -1,78 +1,81 @@
 from datetime import datetime, timedelta
-
 from models.route.route_stop import RouteStop
 from enums.route_status import RouteStatus
 from models.route.city_graph import CityGraph
 
 class Route:
-    
-    ### Route class represent a delivery route between multiple locations
-    ### It stores stops, assigned truck and packages.
-    ### It also provides logic for route validation and delivery checks
-    
+    """
+    Route class represents a delivery route between multiple locations.
+    It stores stops, assigned truck and packages.
+    It also provides logic for route validation and delivery checks.
+    """
     MAX_DISTANCE = 13000
     
-    def __init__(self, route_id: int, stops: list[RouteStop]):
+    # Added optional start_time parameter to support explicit departure planning (Use Case #2)
+    def __init__(self, route_id: int, stops: list[RouteStop], start_time: datetime = None):
         if len(stops) < 2:
             raise ValueError("A route must have at least two stops.")
 
         self._route_id = route_id
         self._vehicle_id = None
-        self._packages_ids: set[int] = set() # set > list, since duplicates are ignored
-        self._status = RouteStatus.PLANNED # status of route starts as planned
+        self._packages_ids: set[int] = set() 
+        self._status = RouteStatus.PLANNED 
         self._stops: list[RouteStop] = stops
         self._total_distance = self._calculate_total_distance()
-        self._calculate_stops_eta(datetime.now())
         
-## PROPERTIES
-    @property                         # route_id
+        if start_time is None:
+            start_time = datetime.now()
+            
+        self._calculate_stops_eta(start_time)
+        
+    @property                         
     def route_id(self):
         return self._route_id
-    @property                         # vehicle_id
+        
+    @property                         
     def vehicle_id(self):
         return self._vehicle_id
-    @vehicle_id.setter                # vehicle_id
+        
+    @vehicle_id.setter                
     def vehicle_id(self, value: int):
         self._vehicle_id = value
-    @property                         # total_distance
+        
+    @property                         
     def total_distance(self):
         return self._total_distance
-    @property                         # packages_ids
+        
+    @property                         
     def packages_ids(self): 
         return tuple(self._packages_ids)
-    @property                         # status
+        
+    @property                         
     def status(self):
         return self._status
-    #TODO: status setter or other method for status change
-    @property                         # stops
+        
+    @status.setter
+    def status(self, value: RouteStatus):
+        self._status = value
+        
+    @property                         
     def stops(self):
         return tuple(self._stops)
     
-    @property                         # calculated
+    @property                         
     def start_location(self):
         return self._stops[0].location
-    @property                         # calculated
+        
+    @property                         
     def end_location(self):
         return self._stops[-1].location
-    @property                         # calculated   
+        
+    @property   
     def locations(self):
         return [stop.location for stop in self._stops]
 
-
-## PUBLIC METHODS
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
-        """More use for createpackage command.
-           CreateRoute finds packets from hubs it visits,
-           instead of checking every single package in the system.
-        """
-        if start_location not in self.locations:
+        if start_location not in self.locations or end_location not in self.locations:
             return False
-
-        if end_location not in self.locations:
-            return False
-
         return self.locations.index(start_location) < self.locations.index(end_location)
-
 
     def add_package(self, package_id: int): 
         if package_id not in self._packages_ids:
@@ -80,39 +83,24 @@ class Route:
 
     def get_current_stop(self, current_time: datetime):
         current_stop = None
-
-        # find the last stop reached by the current time
         for stop in self.stops:
-            if (
-                stop.arrival_time is not None
-                and stop.arrival_time <= current_time
-            ):
+            if stop.arrival_time is not None and stop.arrival_time <= current_time:
                 current_stop = stop
             else:
                 break
-
         return current_stop
 
-
     def weight_at_stop(self, stop_index: int) -> int:
-        """Running truck weight after loading/unloading at stop[stop_index].
-           Walks all stops up to and including the given index,
-           summing pick-ups and subtracting drop-offs.
-        """
         weight = 0
         for stop in self._stops[:stop_index + 1]:
             weight += stop.pick_up_weigth
             weight -= stop.drop_off_weigth
         return weight
 
-
     def calculate_stops_capacity(self):
-        """ Calculate truck weight after each stop """
         return [self.weight_at_stop(i) for i in range(len(self._stops))]
 
-    #Brisbane (Oct 10th 06:00h) → Sydney (Oct 10th 20:00h) → Melbourne (Oct 11th 18:00h)
     def route_stops_info(self):
-        
         def ordinal_suffix(day):
             if 11 <= day <= 13:
                 return "th"
@@ -128,29 +116,13 @@ class Route:
             result.append(f"{stop.location.value} {format_dt(stop.arrival_time)}")
         return ' -> '.join(result)
 
-## PRIVATE METHODS
     def __str__(self):
-
         result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n-stops info-"]
-        
         for index, stop in enumerate(self._stops):
             result.append(f'  {stop} | Truck load: {self.weight_at_stop(index)} kg')
-
         return '\n'.join(result)
-    
-    def _calculate_stops_eta(
-        self,
-        start_time: datetime,
-        stop_duration_hours: int = 1
-    ):
-        """
-        Calculates and assigns all RouteStops:
-            Departure Time
-            Arrival Time
-        param[0] = arival time for first stop
-        param[1] = delay after ariving at one stop and leaving for the next one
-        """
-        # first stop is the route starting point
+
+    def _calculate_stops_eta(self, start_time: datetime, stop_duration_hours: int = 1):
         self._stops[0].arrival_time = start_time
         self._stops[0].departure_time = start_time + timedelta(hours=stop_duration_hours)
 
@@ -164,22 +136,13 @@ class Route:
             )
 
             travel_hours = CityGraph.travel_time_hours(distance)
-
-            arrival_time = (
-                previous_stop.departure_time
-                + timedelta(hours=travel_hours)
-            )
+            arrival_time = previous_stop.departure_time + timedelta(hours=travel_hours)
 
             current_stop.arrival_time = arrival_time
-            current_stop.departure_time = (
-                arrival_time
-                + timedelta(hours=stop_duration_hours)
-            )
+            current_stop.departure_time = arrival_time + timedelta(hours=stop_duration_hours)
             
     def _calculate_total_distance(self) -> int:
-        """ Sum distance between each route stop """
         total = 0
-        # sum the distance between every two consecutive stops
         for i in range(len(self._stops) - 1):
             total += CityGraph.distance(
                 self._stops[i].location,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from models.route.route import Route
 from enums.route_status import RouteStatus
+from datetime  import datetime
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -16,10 +17,10 @@ class RouteService:
     def __init__(self, app_data: ApplicationData):
         self._app_data = app_data
 
-    def create_route(self, stops: list):
+    def create_route(self, stops: list, start_time: datetime = None):
         route_id = self._app_data.generate_route_id()
         
-        route = Route(route_id, stops)
+        route = Route(route_id, stops, start_time)
           
         return route
 
@@ -104,8 +105,10 @@ class RouteService:
                 pickup_stop = stops[i]
 
                 dropoff_stop = next((s for s in stops if s.location == package.end_location), None)
+
+                # Niki cod 
                 if dropoff_stop is None:
-                    continue
+                    raise ValueError(f"Route is invalid: missing stop for {package.end_location} I told you so")
 
                 route.add_package(package.package_id)
                 package.assign_to_route(route.route_id)
