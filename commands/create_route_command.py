@@ -22,7 +22,7 @@ class CreateRouteCommand(BaseCommand):
         ADD packages from hubs calculating how much is droped off and picked up at each stop
         """
         stops = [
-            RouteStop(vh.try_parse_city(location.capitalize()))
+            RouteStop(vh.try_parse_city(location))
             for location 
             in self.params
             ]
