@@ -62,6 +62,10 @@ class RouteService:
         pickup_index = route.stops.index(pickup_stop)
         dropoff_index = route.stops.index(dropoff_stop)
         
+        if route.vehicle_id is None:
+            raise ValueError("Route has no vehicle assigned")
+        
+
         vehicle = self._app_data.find_vehicle(route.vehicle_id)
         # check for truck capacity between package start & end location
         # accounting for already assigned packages that are not picked up
