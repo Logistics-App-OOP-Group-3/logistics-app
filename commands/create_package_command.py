@@ -31,8 +31,8 @@ class CreatePackageCommand(BaseCommand):
             # 
             # 
         """
-        start_location = val_help.try_parse_city(self.params[0])
-        end_location = val_help.try_parse_city(self.params[1])
+        start_location = val_help.try_parse_city(self.params[0].capitalize())
+        end_location = val_help.try_parse_city(self.params[1].capitalize())
         weight = val_help.try_parse_float(self.params[2])
         contact_info = self.params[3]
         
@@ -46,7 +46,7 @@ class CreatePackageCommand(BaseCommand):
         result = [
             "Package created.",
             f"Package ID: {package.package_id}",
-            f"From: {start_location} -> To: {end_location}",
+            f"From: {start_location.value} -> To: {end_location.value}",
             f"Weight: {weight} kg"
         ]
         
@@ -55,7 +55,7 @@ class CreatePackageCommand(BaseCommand):
             for route in routes:
                 result.append(
                     f"- Route {route.route_id}: "
-                    f"{route.start_location} -> {route.end_location}"
+                    f"{route.route_stops_info()}"
                 )
         else:
             result.append("No suitable routes")
