@@ -18,6 +18,7 @@ def try_parse_city(city_value_or_name: str):
         raise ValueError(f"Can\'t parse {city_value_or_name} to City enum object.")
     return member
 
+
 def try_parse_float(float_string: str):
     try:
         return float(float_string)
