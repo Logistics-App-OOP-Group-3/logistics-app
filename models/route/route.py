@@ -16,12 +16,6 @@ class Route:
         if len(stops) < 2:
             raise ValueError("A route must have at least two stops.")
 
-        #todo: remove todos: All done
-        #TODO: encapsulate                                                     -=- DONE
-        #TODO: Adding total_distance attribute will simplify outside logic     -=- DONE
-        #TODO: Also assigning expected arival times on creation                -=- DONE
-        #TODO: Departure time can be simply 30 min or 1h for loading/unloading -=- DONE
-        
         self._route_id = route_id
         self._vehicle_id = None
         self._packages_ids: set[int] = set() # set > list, since duplicates are ignored
@@ -81,7 +75,7 @@ class Route:
 
 
     def add_package(self, package_id: int): 
-        if package_id not in self._packages_ids: #TODO: changed to set, since duplicates are ignored, can throw error if its present
+        if package_id not in self._packages_ids:
             self._packages_ids.add(package_id)
 
     def get_current_stop(self, current_time: datetime):
@@ -116,15 +110,31 @@ class Route:
         """ Calculate truck weight after each stop """
         return [self.weight_at_stop(i) for i in range(len(self._stops))]
 
-
+    #Brisbane (Oct 10th 06:00h) → Sydney (Oct 10th 20:00h) → Melbourne (Oct 11th 18:00h)
+    def route_stops_info(self):
+        
+        def ordinal_suffix(day):
+            if 11 <= day <= 13:
+                return "th"
+            return {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+        
+        def format_dt(dt: datetime):
+            day = dt.day
+            suffix = ordinal_suffix(day)
+            return f"({dt.strftime('%b')} {day}{suffix} {dt.strftime('%H:%M')}h)"
+        
+        result = []
+        for stop in self._stops:
+            result.append(f"{stop.location.value} {format_dt(stop.arrival_time)}")
+        return ' -> '.join(result)
 
 ## PRIVATE METHODS
     def __str__(self):
 
-        result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n"]
+        result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n-stops info-"]
         
         for index, stop in enumerate(self._stops):
-            result.append(f'{stop} | Truck load: {self.weight_at_stop(index)} kg')
+            result.append(f'  {stop} | Truck load: {self.weight_at_stop(index)} kg')
 
         return '\n'.join(result)
     
