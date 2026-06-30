@@ -2,6 +2,8 @@ from commands.base.base_command import BaseCommand
 from commands.validation_helper import validate_params_count
 
 
+#TODO when we finish the basic commands we can implement a new advance route system that simulates routes in real time
+
 class CompleteRouteCommand(BaseCommand):
 
     def __init__(self, params, app_data, route_service):

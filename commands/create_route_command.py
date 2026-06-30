@@ -6,8 +6,9 @@ import commands.validation_helper as vh
 
 class CreateRouteCommand(BaseCommand):
 
+    #TODO Make the create route accept both formats ADL MEL and Adelaine Melbourne as parameters
+
     def __init__(self, params, app_data, route_service: RouteService, vehicle_service: VehicleService):
-        vh.validate_params_count(params, 2, "CreateRouteCommand")
         super().__init__(params, app_data)
         self._route_service = route_service
         self._vehicle_service = vehicle_service
