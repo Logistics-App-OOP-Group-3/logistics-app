@@ -91,13 +91,13 @@ class RouteService:
             hub = self._app_data.find_hub(stops[i].location)
             later_stops = [stop.location for stop in stops[i+1::]]
             candidates = hub.find_packages_for_locations(later_stops)
-            current_weigth = route.weight_at_stop(i)
+            current_weight = route.weight_at_stop(i)
 
             for package in candidates:
-                if current_weigth + package.weight > vehicle.capacity:
+                if current_weight + package.weight > vehicle.capacity:
                     continue  # skip this package, maybe next one will fit
                 
-                current_weigth += package.weight
+                current_weight += package.weight
                 pickup_stop = stops[i]
 
                 dropoff_stop = next(s for s in stops if s.location == package.end_location)
