@@ -25,9 +25,7 @@ class DataRepository:
         self._app_data.refresh_ids()
     
     def save(self):
-        # Safely convert set or dictionary values to an iterable before saving
-        vehicles_list = list(self._app_data.vehicles.values()) if isinstance(self._app_data.vehicles, dict) else self._app_data.vehicles
-        self._file_service.write_lines('vehicles', (v.to_csv() for v in vehicles_list))   
+        self._file_service.write_lines('vehicles', (v.to_csv() for v in self._app_data.vehicles)) 
         # TODO: write other models save      
         
     ## LOAD METHODS ##
