@@ -123,7 +123,7 @@ class RouteService:
     def start_route(self, route_id: int):
         route = self.get_route(route_id)
         
-        if route.truck_id is None:
+        if route.vehicle_id is None:
             raise ValueError("Cannot start a route without a truck assigned to it")
         
         if route.status == RouteStatus.COMPLETED:
