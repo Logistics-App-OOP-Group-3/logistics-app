@@ -68,9 +68,9 @@ class ApplicationData:
     def refresh_ids(self) -> None:
 
         #Called  after loading from file to prevent id collisions
-        self._id_package = max(self._packages.keys(), default=0) + 1
-        self._id_route = max(self._routes.keys(), default=0) + 1
-        self._id_vehicle = max(self._vehicles.keys(), default=0) + 1
+        self._id_package = max(self._packages.keys(), default=0)
+        self._id_route = max(self._routes.keys(), default=0)
+        self._id_vehicle = max(self._vehicles.keys(), default=0)
     
 
     # Find methods
