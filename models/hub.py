@@ -33,8 +33,9 @@ class Hub:
         """Group packages by: end_locations in param[0]: cities"""
         return [package
             for package in self._packages.values()
-            if package.end_location in cities and
-            package.route_id == None]
+            if package.route_id == None and
+            package.end_location in cities 
+            ]
         
 
     def add_single_package(self, package: Package):

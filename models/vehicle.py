@@ -19,7 +19,7 @@ class Vehicle:
     def name(self):
         return self._name
     @property                       # capacity
-    def capacity(self):
+    def max_capacity(self):
         return self._max_capacity
     @property                       # max_range
     def max_range(self):
@@ -42,7 +42,7 @@ class Vehicle:
     def __str__(self):
         return (
             f"{self.vehicle_id}.{self.name} "
-            f"MaxCapacity: {self.capacity} "
+            f"MaxCapacity: {self.max_capacity} "
             f"MaxKMRange: {self.max_range}"
         )
         
