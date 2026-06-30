@@ -22,15 +22,7 @@ class CreatePackageCommand(BaseCommand):
         self._route_service = route_service
     
     def execute(self):
-        """ 
-            # Dont rush creating package (exhausting package_ids) that the customer
-            # might decide to cancel.
-            #      opt1: package gets assigned to route
-            #      opt2: package is leaved at the hub without route
-            #      opt3: the package delivery is canceled
-            # 
-            # 
-        """
+        
         start_location = val_help.try_parse_city(self.params[0])
         end_location = val_help.try_parse_city(self.params[1])
         weight = val_help.try_parse_float(self.params[2])
@@ -42,26 +34,47 @@ class CreatePackageCommand(BaseCommand):
             weight,
             contact_info
         )
-        routes = self._route_service.find_routes_for_package(package)
+        
+        hub = self._app_data.find_hub(start_location)
+        hub.add_single_package(package)
+        
         result = [
             "Package created.",
             f"Package ID: {package.package_id}",
             f"From: {start_location.value} -> To: {end_location.value}",
             f"Weight: {weight} kg"
-        ]
+        ]   
         
+        
+        routes = self._route_service.find_routes_for_package(package)
         if routes:
             result.append("Matching routes:")
             for route in routes:
+                vehicle = self._app_data.find_vehicle(route.vehicle_id)
                 result.append(
                     f"- Route {route.route_id}: "
-                    f"{route.route_stops_info()}"
+                    f"{route.route_stops_info(vehicle.max_capacity)}"
                 )
         else:
             result.append("No suitable routes")
+            result.append(f"Package left at hub {hub.city.value}")
+            return "\n".join(result)
+        
+        print('\n'.join(result))
+        input_route_id = val_help.try_parse_int(input("Enter route id to assign it to or 0 to leave at hub:\n  "))
+        
+        if input_route_id != 0:
+            for route in routes:
+                if route.route_id == input_route_id:
+                    self._route_service.assign_package_to_route(package, route.route_id)
+                    break
+            else:
+                raise ValueError("Invalid route_id to assign package to!")
             
-  
-        return "\n".join(result)#
-
+            return f"Package assigned to route {input_route_id}"
+        return f"Package left at hub {hub.city.value}"
+        
+        
+        
         
 
