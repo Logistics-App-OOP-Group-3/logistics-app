@@ -73,8 +73,16 @@ class Route:
         return [stop.location for stop in self._stops]
 
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
+        
+        """Is
+            param[0]: package: start_location
+        before
+            param[1]: package: end_location
+        in route stop.
+        """
         if start_location not in self.locations or end_location not in self.locations:
             return False
+        
         return self.locations.index(start_location) < self.locations.index(end_location)
 
     def add_package(self, package_id: int): 
@@ -101,6 +109,9 @@ class Route:
         return [self.weight_at_stop(i) for i in range(len(self._stops))]
 
     def route_stops_info(self):
+    #Brisbane (Oct 10th 06:00h) → Sydney (Oct 10th 20:00h) → Melbourne (Oct 11th 18:00h)
+    def route_stops_info(self, vehicle_max_capacity: int):
+        
         def ordinal_suffix(day):
             if 11 <= day <= 13:
                 return "th"
@@ -112,8 +123,10 @@ class Route:
             return f"({dt.strftime('%b')} {day}{suffix} {dt.strftime('%H:%M')}h)"
         
         result = []
-        for stop in self._stops:
-            result.append(f"{stop.location.value} {format_dt(stop.arrival_time)}")
+        stops_capacity = self.calculate_stops_capacity()
+        for stop, capacity in zip(self._stops, stops_capacity):
+            free_capacity = vehicle_max_capacity - capacity
+            result.append(f"{stop.location.value} {format_dt(stop.arrival_time)}[{free_capacity} kg]")
         return ' -> '.join(result)
 
     def __str__(self):

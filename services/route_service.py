@@ -71,7 +71,7 @@ class RouteService:
         # check for truck capacity between package start & end location
         # accounting for already assigned packages that are not picked up
         for i in range(pickup_index, dropoff_index):  
-            if route.weight_at_stop(i) + package.weight > vehicle.capacity:
+            if route.weight_at_stop(i) + package.weight > vehicle.max_capacity:
                 raise ValueError(
                     f"Package exceeds vehicle capacity at stop {route.stops[i].location.name}"
                 )
@@ -98,7 +98,7 @@ class RouteService:
             current_weight = route.weight_at_stop(i)
 
             for package in candidates:
-                if current_weight + package.weight > vehicle.capacity:
+                if current_weight + package.weight > vehicle.max_capacity:
                     continue  # skip this package, maybe next one will fit
                 
                 current_weight += package.weight
