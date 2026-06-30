@@ -5,12 +5,19 @@ def validate_params_count(params, expected_count: int, source: str):
         raise ValueError(
             f'Invalid number of parameters passed to: {source}\n'
             f'  Expected: {expected_count}; received: {len(params)}!')
+        
 
-def try_parse_city(city_value: str):
-    try:
-        return City(city_value)
-    except:
-        raise ValueError(f"Can\'t parse {city_value} to City enum object.")
+_CITY_LOOKUP = {
+    **{m.name.lower(): m for m in City},
+    **{m.value.lower(): m for m in City},
+}
+
+def try_parse_city(city_value_or_name: str):
+    member = _CITY_LOOKUP.get(city_value_or_name.strip().lower())
+    if member is None:
+        raise ValueError(f"Can\'t parse {city_value_or_name} to City enum object.")
+    return member
+
 
 def try_parse_float(float_string: str):
     try:

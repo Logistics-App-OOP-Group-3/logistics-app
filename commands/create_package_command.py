@@ -31,8 +31,8 @@ class CreatePackageCommand(BaseCommand):
             # 
             # 
         """
-        start_location = val_help.try_parse_city(self.params[0].capitalize())
-        end_location = val_help.try_parse_city(self.params[1].capitalize())
+        start_location = val_help.try_parse_city(self.params[0])
+        end_location = val_help.try_parse_city(self.params[1])
         weight = val_help.try_parse_float(self.params[2])
         contact_info = self.params[3]
         
