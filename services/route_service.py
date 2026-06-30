@@ -104,6 +104,8 @@ class RouteService:
                 pickup_stop = stops[i]
 
                 dropoff_stop = next((s for s in stops if s.location == package.end_location), None)
+                if dropoff_stop is None:
+                    continue
 
                 route.add_package(package.package_id)
                 package.assign_to_route(route.route_id)
