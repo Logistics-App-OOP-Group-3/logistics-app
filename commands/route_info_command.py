@@ -4,12 +4,11 @@ from commands.validation_helper import validate_params_count
 
 class RouteInfoCommand(BaseCommand):
 
-    def __init__(self, params, app_data, route_service, vehicle_service):
+    def __init__(self, params, app_data, route_service):
         # Expected input: <route_id>
         validate_params_count(params, 1, "RouteInfoCommand")
         super().__init__(params, app_data)
         self._route_service = route_service
-        self._vehicle_service = vehicle_service
 
     def execute(self):
 

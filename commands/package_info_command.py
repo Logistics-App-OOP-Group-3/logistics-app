@@ -1,5 +1,6 @@
 from commands.base.base_command import BaseCommand
-from commands.validation_helper import validate_params_count
+from commands.validation_helper import validate_params_count, try_parse_int
+
 
 
 class PackageInfoCommand(BaseCommand):
@@ -12,7 +13,8 @@ class PackageInfoCommand(BaseCommand):
 
     def execute(self):
 
-        package_id = int(self.params[0])
+        package_id = try_parse_int(self.params[0])
+        
 
         # Displays detailed package information
         # Should include:

@@ -52,15 +52,14 @@ class CommandFactory:
             return PackageInfoCommand(
                 params,
                 self._app_data,
-                self._package_service,
-                self._route_service
+                self._package_service
             )
 
         if cmd == "routeinfo":
             return RouteInfoCommand(
                 params,
                 self._app_data,
-                self._route_service
+                self._route_service,
             )
 
         raise ValueError(f"Invalid command name: {cmd}!")
