@@ -47,13 +47,14 @@ class Hub:
         for package in packages:
             self.add_single_package(package)
     
-    def remove_single_package(self, package: Package):
-        if package.package_id not in self._packages:
+    def remove_single_package(self, package_id: int):
+        if package_id not in self._packages:
             raise ValueError(f"Package not in hub {self.city.name}")
-        self._packages.pop(package.package_id)
+
+        package = self._packages.pop(package_id)
         self._packages_weigth -= package.weight
         
-    def remove_multiple_packages(self, packages_ids):
+    def remove_multiple_packages(self, packages_ids:list[int]):
         for package_id in packages_ids:
             self.remove_single_package(package_id)
             
