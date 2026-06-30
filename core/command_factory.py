@@ -25,7 +25,6 @@ class CommandFactory:
         self._package_service = PackageService(app_data)
         self._vehicle_service = VehicleService(app_data)
 
-        # repository (load AFTER services exist)
         self._data_repository = DataRepository(app_data)
         self._data_repository.load()
 

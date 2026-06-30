@@ -21,8 +21,6 @@ class ApplicationData:
         self._routes: dict[int,Route] = dict()
         self._vehicles: dict[int, Vehicle] = dict()
         self._hubs: dict[City, Hub] = dict()
-        
-        self.load_vehicles_from_csv("data/vehicles.csv")
         # self._load_hubs_database()
         
     @property
@@ -55,21 +53,6 @@ class ApplicationData:
         return self._id_vehicle
     
 
-    def load_vehicles_from_csv(self, filepath: str):
-        with open(filepath, "r") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-
-                vehicle = Vehicle.from_csv(line)
-
-                if vehicle.vehicle_id in self._vehicles:
-                    raise ValueError(f"Duplicate vehicle id: {vehicle.vehicle_id}")
-
-                self._vehicles[vehicle.vehicle_id] = vehicle
-
-        self._id_vehicle = max(self._vehicles.keys(), default=0)
 
     
 # FIND METHODS
