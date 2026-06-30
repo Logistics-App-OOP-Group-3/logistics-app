@@ -20,12 +20,12 @@ class DataRepository:
         
         
     def load(self):
-        max_package_id = 0
-        max_route_id = 0
-        max_vehicle_id = self._load_vehicles_from_file()
+
+        self._load_vehicles_from_file()
         self._load_hubs_database()
         
-        self._app_data.sync_ids(max_package_id, max_route_id, max_vehicle_id)
+        
+        self._app_data.refresh_ids()
     
     def save(self):
         self._file_service.write_lines('vehicles', (v.to_csv() for v in self._app_data.vehicles))   
@@ -34,19 +34,10 @@ class DataRepository:
         
         
     ## LOAD METHODS ##
-    def _load_vehicles_from_file(self) -> int:
-        """ Returns max_vehicle_id loaded from the file"""
-        max_vehicle_id = 0
-        for vehicle_model_line in self._file_service.read_lines('vehicles'):
-            params = vehicle_model_line.split(',')
-            validate_params_count(params, 4, "Load vehicle from file")
-            
-            vehicle = Vehicle.from_csv(vehicle_model_line)
-            max_vehicle_id = max(max_vehicle_id, vehicle.vehicle_id)
-            self._app_data.add_vehicle(vehicle)
-        return max_vehicle_id
-    
     def _load_hubs_database(self):
         """Currently initialize hubs for every city on program startup"""
+        if self._app_data.hubs:
+            return
+
         for c in City:
             self._app_data.add_hub(Hub(c))
