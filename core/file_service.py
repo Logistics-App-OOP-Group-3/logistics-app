@@ -1,5 +1,7 @@
+from __future__ import annotations
 from os import path, replace
 from typing import TYPE_CHECKING
+from typing import Iterable
 
 if TYPE_CHECKING:
     from typing import Iterable

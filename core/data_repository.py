@@ -1,3 +1,4 @@
+from __future__ import annotations
 from core.file_service import FileService
 from models.package.package import Package
 from models.route.route import Route
