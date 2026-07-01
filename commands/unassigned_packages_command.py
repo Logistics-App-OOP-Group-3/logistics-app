@@ -1,25 +1,16 @@
 from commands.base.base_command import BaseCommand
-
+from services.package_service import PackageService
+from enums.package_status import PackageStatus
 
 class UnassignedPackagesCommand(BaseCommand):
 
-    def __init__(self, params, app_data, package_service):
-        # No parameters required
+    def __init__(self, params, app_data, package_service: PackageService):
         super().__init__(params, app_data)
         self._package_service = package_service
 
     def execute(self):
+        """Show all unassigned packages 1 per line"""
 
-        # Lists all packages that are not assigned to any route
-        # Should filter by:
-        # - package.route_id is None OR status == NOT_ASSIGNED
+        packages = self._package_service.get_packages_by_status(PackageStatus.NOT_ASSIGNED)
 
-        packages = self._package_service.get_all_packages()
-
-        result = []
-
-        for p in packages:
-            if p.route_id is None:
-                result.append(f"{p.package_id}: {p.start_location} -> {p.end_location}")
-
-        return "\n".join(result) if result else "No unassigned packages"
+        return '\n'.join([p.short_info() for p in packages])

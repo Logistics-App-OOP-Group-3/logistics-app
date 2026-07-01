@@ -54,6 +54,9 @@ class Package:
         
     def mark_delivered(self):
         self.status = PackageStatus.DELIVERED
+    
+    def short_info(self) -> str:
+        return f"[{self._package_id}] {self._start_location.value} -> {self._end_location.value}"
         
     def __str__(self):
         return (

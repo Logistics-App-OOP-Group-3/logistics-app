@@ -1,14 +1,18 @@
 from __future__ import annotations
 from models.package.package import Package
 from enums.package_status import PackageStatus
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from core.application_data import ApplicationData
 
 class PackageService:
     
     ### Handles all the business logic related to packages
     ### Responsible for creating and retrieving packages
     ### Also responsible for filtering packages by status
-    def __init__(self, app_data):
-        self.app_data = app_data
+    def __init__(self, app_data: ApplicationData):
+        self._app_data = app_data
 
     def create_package(
         self,
@@ -17,7 +21,7 @@ class PackageService:
         weight: float,
         contact_info: str
     ):
-        package_id = self.app_data.generate_package_id()
+        package_id = self._app_data.generate_package_id()
 
         package = Package(
             package_id,
@@ -27,18 +31,18 @@ class PackageService:
             contact_info
         )
 
-        self.app_data.add_package(package)
+        self._app_data.add_package(package)
         return package
 
     def get_package(self, package_id: int):
-        return self.app_data.find_package(package_id)
+        return self._app_data.find_package(package_id)
 
     def get_all_packages(self):
-        return list(self.app_data.packages.values())
+        return list(self._app_data.packages.values())
 
     def get_packages_by_status(self, status: PackageStatus):
         return [
-            p for p in self.app_data.packages.values()
+            p for p in self._app_data.packages.values()
             if p.status == status
         ]
 

@@ -44,7 +44,6 @@ class Hub:
             self._packages_weigth += package.weight
             
     def add_multiple_packages(self, packages: list[Package]):
-        """Useless if we straight up delete packages when they get delivered"""
         for package in packages:
             self.add_single_package(package)
     

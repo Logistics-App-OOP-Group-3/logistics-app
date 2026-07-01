@@ -32,7 +32,6 @@ create_route_command.py should have 2 version
 """
 
 app_data = ApplicationData()
-#! Services singletons created in command factory
 cmd_factory = CommandFactory(app_data)
 engine = Engine(cmd_factory)
 engine.start()

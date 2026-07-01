@@ -6,7 +6,7 @@ from commands.create_package_command import CreatePackageCommand
 from commands.create_route_command import CreateRouteCommand
 from commands.package_info_command import PackageInfoCommand
 from commands.route_info_command import RouteInfoCommand
-
+from commands.unassigned_packages_command import UnassignedPackagesCommand
 from services.route_service import RouteService
 from services.package_service import PackageService
 from services.vehicle_service import VehicleService
@@ -46,6 +46,13 @@ class CommandFactory:
                 self._app_data,
                 self._route_service,
                 self._vehicle_service
+            )
+            
+        if cmd == "unassignedpackages":
+            return UnassignedPackagesCommand(
+                params,
+                self._app_data,
+                self._package_service
             )
 
         if cmd == "packageinfo":
