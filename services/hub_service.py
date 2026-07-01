@@ -15,7 +15,7 @@ class HubService:
     
 
     
-    def info_unassigned_packages_by_city(self) -> str:
+    def info_not_assigned_packages_by_city(self) -> str:
         """ Return: 
                 "city [total_packages_weight kg.] packages_count" 
                     line for each hub in app_data 

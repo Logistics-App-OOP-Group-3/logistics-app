@@ -43,7 +43,7 @@ class Hub:
             package.end_location in set_cities 
             ]
         
-    def info_unassigned_packages_by_end_location(self) -> str:
+    def info_not_assigned_packages_by_end_location(self) -> str:
         """ Returns: 
                 "end_location [total_packages_weight kg.] packages_count"
                     line for each package end_location in hub

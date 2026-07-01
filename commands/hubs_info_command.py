@@ -15,6 +15,6 @@ class HubInfoCommand(BaseCommand):
 
     def execute(self):
         
-        return self._hub_service.info_unassigned_packages_by_city()
+        return self._hub_service.info_not_assigned_packages_by_city()
         
         

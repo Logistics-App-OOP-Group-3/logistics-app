@@ -16,5 +16,5 @@ class InspectHubCommand(BaseCommand):
         hub_city = vh.try_parse_city(self.params[0])
         hub = self._app_data.find_hub(hub_city)
         
-        return hub.info_unassigned_packages_by_end_location()
+        return hub.info_not_assigned_packages_by_end_location()
         
