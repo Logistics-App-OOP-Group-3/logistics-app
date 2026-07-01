@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+import os
 
 if TYPE_CHECKING:
     from core.command_factory import CommandFactory
@@ -7,8 +8,11 @@ if TYPE_CHECKING:
 class Engine:
     def __init__(self, factory: CommandFactory):
         self._command_factory = factory
-
+        
     def start(self):
+        
+        self.clear_console()
+        
         while True:
             try:
                 input_line = input()
@@ -25,3 +29,8 @@ class Engine:
                 print(str(err))
         
         self._command_factory._data_repository.save() # save data to files on exit
+    
+    @staticmethod
+    def clear_console():
+        # 'nt' - Windows, 'posix' - Linux & macOS
+        os.system('cls' if os.name == 'nt' else 'clear')
