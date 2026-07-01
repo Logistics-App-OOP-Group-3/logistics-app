@@ -14,7 +14,7 @@ class Package:
         
         self._route_id = None
         
-        self.status = PackageStatus.NOT_ASSIGNED
+        self._status = PackageStatus.NOT_ASSIGNED
 
 ## PROPERTIES
     @property
@@ -36,6 +36,12 @@ class Package:
     def contact_info(self, value: str):
         self._ensure_valid_contact_info(value)
         self._contact_info = value
+    @property
+    def status(self):
+        return self._status
+    @status.setter
+    def status(self, value: PackageStatus):
+        self._status = value
     @property
     def route_id(self):
         return self._route_id

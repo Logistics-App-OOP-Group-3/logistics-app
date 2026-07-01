@@ -17,7 +17,7 @@ class CreateRouteCommand(BaseCommand):
         CREATE route with stops      (route_service)[init all stop departure & arival time]
         SEACH for available vehicle  (vehicle_service)
         DISCARD route if no vehicle to complete it AND raise error
-        ADD packages from hubs calculating how much is droped off and picked up at each stop
+        ADD packages from hubs (FIFO) calculating how much is droped off and picked up at each stop
         """
         stops = [
             RouteStop(vh.try_parse_city(location))

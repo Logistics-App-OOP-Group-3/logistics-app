@@ -7,9 +7,12 @@ from commands.create_route_command import CreateRouteCommand
 from commands.package_info_command import PackageInfoCommand
 from commands.route_info_command import RouteInfoCommand
 from commands.unassigned_packages_command import UnassignedPackagesCommand
+from commands.hubs_info_command import HubInfoCommand
+from commands.inspect_hub_command import InspectHubCommand
 from services.route_service import RouteService
 from services.package_service import PackageService
 from services.vehicle_service import VehicleService
+from services.hub_service import HubService
 from core.data_repository import DataRepository
 
 if TYPE_CHECKING:
@@ -24,6 +27,7 @@ class CommandFactory:
         self._route_service = RouteService(app_data)
         self._package_service = PackageService(app_data)
         self._vehicle_service = VehicleService(app_data)
+        self._hub_service = HubService(app_data)
 
         self._data_repository = DataRepository(app_data)
         self._data_repository.load()
@@ -53,6 +57,20 @@ class CommandFactory:
                 params,
                 self._app_data,
                 self._package_service
+            )
+        
+        if cmd == "hubsinfo":
+            return HubInfoCommand(
+                params,
+                self._app_data,
+                self._hub_service
+            )
+            
+        if cmd == "inspecthub":
+            return InspectHubCommand(
+                params,
+                self._app_data,
+                self._hub_service
             )
 
         if cmd == "packageinfo":
