@@ -108,9 +108,8 @@ class Route:
     def calculate_stops_capacity(self):
         return [self.weight_at_stop(i) for i in range(len(self._stops))]
 
-    def route_stops_info(self):
     #Brisbane (Oct 10th 06:00h) → Sydney (Oct 10th 20:00h) → Melbourne (Oct 11th 18:00h)
-    def route_stops_info(self, vehicle_max_capacity: int):
+    def route_stops_info(self, vehicle_max_capacity: int = None):
         
         def ordinal_suffix(day):
             if 11 <= day <= 13:
@@ -125,8 +124,11 @@ class Route:
         result = []
         stops_capacity = self.calculate_stops_capacity()
         for stop, capacity in zip(self._stops, stops_capacity):
-            free_capacity = vehicle_max_capacity - capacity
-            result.append(f"{stop.location.value} {format_dt(stop.arrival_time)}[{free_capacity} kg]")
+            line = f"{stop.location.value} {format_dt(stop.arrival_time)}"
+            if vehicle_max_capacity:
+                free_capacity = vehicle_max_capacity - capacity
+                line += f"[{free_capacity} kg]"
+            result.append(line)
         return ' -> '.join(result)
 
     def __str__(self):
