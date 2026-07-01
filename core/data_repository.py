@@ -65,14 +65,17 @@ class DataRepository:
         # 1001-1010: Scania | Capacity: 42000 | Range: 8000
         for v_id in range(1001, 1011):
             self._app_data.add_vehicle(Vehicle(v_id, "Scania", 42000, 8000))
+            self._app_data.observe_vehicle_id(v_id)
             
         # 1011-1025: Man | Capacity: 37000 | Range: 10000
         for v_id in range(1011, 1026):
             self._app_data.add_vehicle(Vehicle(v_id, "Man", 37000, 10000))
+            self._app_data.observe_vehicle_id(v_id)
             
         # 1026-1040: Actros | Capacity: 26000 | Range: 13000
         for v_id in range(1026, 1041):
             self._app_data.add_vehicle(Vehicle(v_id, "Actros", 26000, 13000))
+            self._app_data.observe_vehicle_id(v_id)
 
     def _load_hubs_database(self):
         """Currently initialize hubs for every city on program startup"""
