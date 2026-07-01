@@ -21,8 +21,6 @@ class DataRepository:
     def load(self):
         self._load_vehicles_from_file()
         self._load_hubs_database()
-        
-        self._app_data.refresh_ids()
     
     def save(self):
         self._file_service.write_lines('vehicles', (v.to_csv() for v in self._app_data.vehicles)) 
@@ -53,6 +51,7 @@ class DataRepository:
                     if route_id is not None:
                         vehicle.route_id = route_id
                     self._app_data.add_vehicle(vehicle)
+                    self._app_data.observe_vehicle_id(v_id)
                 return
         except Exception:
             # Fall back to seeding if file operations fail or file doesn't exist yet

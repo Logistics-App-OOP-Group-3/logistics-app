@@ -63,16 +63,16 @@ class ApplicationData:
         self._id_vehicle += 1
         return self._id_vehicle
     
+    #Instead of refresh or sync
+    def observe_package_id(self, id: int) -> None:
+        self._id_package = max(self._id_package, id)
 
-    # Changed sync ids to refresh ids this makes it so we dont need a max_id varaible and also we can call the method without parameters
-    def refresh_ids(self) -> None:
+    def observe_route_id(self, id: int) -> None:
+        self._id_route = max(self._id_route, id)
 
-        #Called  after loading from file to prevent id collisions
-        self._id_package = max(self._packages.keys(), default=0)
-        self._id_route = max(self._routes.keys(), default=0)
-        self._id_vehicle = max(self._vehicles.keys(), default=0)
+    def observe_vehicle_id(self, id: int) -> None:
+        self._id_vehicle = max(self._id_vehicle, id)
     
-
     # Find methods
     def find_package(self, id: int) -> Package:
         if id not in self._packages:
