@@ -1,0 +1,8 @@
+createpackage dar mel 140 gosho@abv.bg
+createpackage syd bri 20 0882546632
+createpackage mel bri 45.20 toshko
+createpackage adl syd 120.45 pesho@email.bg
+createpackage asp adl 24444.44 sestramu
+createpackage bri per 260 bratmu
+createpackage dar syd 67.68 chichomu
+createpackage per bri 99.99 2riqetaj
