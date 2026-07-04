@@ -73,12 +73,8 @@ class Route:
     def locations(self):
         return [stop.location for stop in self._stops]
     
-    @property
-    def completed_stop(self):
-        return tuple(self._completed_stops)
 
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
-        
         """Is
             param[0]: package: start_location
         before
@@ -94,12 +90,8 @@ class Route:
         if package_id not in self._packages_ids:
             self._packages_ids.add(package_id)
       
-      
     def get_index_of_next_incompleted_stop(self) -> int:
-        """
-            Returns:
-                index of first incompleted route_stop
-        """
+        """ Returns: index of first incompleted route_stop """
         idx_first_incompleted = next(stop for stop in self._completed_stops if stop == False)
         if idx_first_incompleted is None:
             raise ValueError("Searching for incompleted stop in a completed route.")

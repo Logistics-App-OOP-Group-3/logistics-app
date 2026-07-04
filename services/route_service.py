@@ -150,10 +150,11 @@ class RouteService:
                 self.load_route_packages_from_stop(route, stop_idx)
             elif stop_idx == len(route.stops) - 1: # last stop
                 self.unload_route_packages_from_stop(route, stop_idx)
-                route.status = RouteStatus.COMPLETED
+                self.complete_route(route.route_id)
             else:
                 self.unload_route_packages_from_stop(route, stop_idx)
                 self.load_route_packages_from_stop(route, stop_idx)
+            route.mark_stop_as_complted(stop_idx)
                 
 
 
