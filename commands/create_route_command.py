@@ -35,7 +35,7 @@ class CreateRouteCommand(BaseCommand):
                 )
             
         self._route_service.assign_truck_to_route(route, vehicle)
-        self._route_service.load_packages_from_hubs(route, vehicle)
+        self._route_service.assign_packages_from_hubs(route, vehicle)
                         
         self.app_data.add_route(route)
         return (

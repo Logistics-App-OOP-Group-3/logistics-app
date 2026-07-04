@@ -83,7 +83,7 @@ class RouteService:
 
 
 
-    def load_packages_from_hubs(self, route: Route, vehicle: Vehicle):
+    def assign_packages_from_hubs(self, route: Route, vehicle: Vehicle):
         """
         For each stop, find unassigned packages at that hub
         destined for any later stop, then load them in acceptance order
@@ -108,7 +108,8 @@ class RouteService:
 
                 # Niki cod 
                 if dropoff_stop is None:
-                    raise ValueError(f"Route is invalid: missing stop for {package.end_location} I told you so")
+                    raise ValueError(f"Route is invalid: missing stop for {package.end_location} I told you so"
+                                     f"Trqbva qko da gurmi. Programata da krashne.")
 
                 route.add_package(package.package_id)
                 package.assign_to_route(route.route_id)
@@ -139,6 +140,39 @@ class RouteService:
         
         route.status = RouteStatus.IN_PROGRESS
         
+    # SIMULATION FUNC
+    def complete_all_routes_next_stop(self):
+        """Simulation func": that executes the completion of route's next stop"""
+        for route in self.get_routes_by_status(RouteStatus.IN_PROGRESS):
+            stop_idx = route.get_index_of_next_incompleted_stop()
+            
+            if stop_idx == 0: # first stop
+                self.load_route_packages_from_stop(route, stop_idx)
+            elif stop_idx == len(route.stops) - 1: # last stop
+                self.unload_route_packages_from_stop(route, stop_idx)
+                route.status = RouteStatus.COMPLETED
+            else:
+                self.unload_route_packages_from_stop(route, stop_idx)
+                self.load_route_packages_from_stop(route, stop_idx)
+                
+
+
+    def load_route_packages_from_stop(self, route: Route, stop_id: int):
+        stop = route.stops[stop_id]
+        hub = self._app_data.find_hub(stop.location)
+        
+        for package_id in route.packages_ids:
+            if package_id in hub.packages_ids:
+                hub.remove_single_package(package_id)
+    
+    def unload_route_packages_from_stop(self, route: Route, stop_id: int):
+        stop = route.stops[stop_id]
+        hub = self._app_data.find_hub(stop.location)
+        
+        for package_id in route.packages_ids:
+            package = self._app_data.find_package(package_id)
+            if package.end_location == hub.city:
+                hub.add_single_package(package, delivered=True)
         
     def complete_route(self, route_id: int):
         route = self.get_route(route_id)

@@ -5,7 +5,7 @@ from enums.package_status import PackageStatus
 
 class Hub:
     """
-        Holds packages for clients to leave(for now) #TODO: and receive(for later).
+        Holds packages for clients to leave(for now) #todo: and receive(for later).
         Each city represents one hub.
         For now City is UID for hubs.
     """
@@ -13,7 +13,7 @@ class Hub:
     def __init__(self, city: City):
         self._city = city
         self._packages: dict[int, Package] = dict()
-        #self._delivered_packages
+        self._delivered_packages: dict[int, Package] = dict()
         self._packages_weigth: int = 0
 
 ## PROPERTY   
@@ -66,15 +66,28 @@ class Hub:
         return '\n'.join(result)
                 
                 
-    def add_single_package(self, package: Package):
-        if package.package_id not in self._packages: 
+    def add_single_package(self, package: Package, delivered: bool = False):
+        if delivered == True:
+            if package.package_id in self._delivered_packages:
+                raise ValueError(f"Adding delivered package to hub error: "
+                                 f"Package {package.package_id} already in {self._city.value} hub!")
+
+            self._delivered_packages[package.package_id] = package
+        else: #delivered == False:
+            if package.package_id in self._packages:
+                 raise ValueError(f"Adding package to hub error: "
+                                  f"Package {package.package_id} already in {self._city.value} hub!")
+                 
             self._packages[package.package_id] = package
             self._packages_weigth += package.weight
+
             
-    def add_multiple_packages(self, packages: list[Package]):
+    def add_multiple_packages(self, packages: list[Package], delivered: bool = False):
         for package in packages:
-            self.add_single_package(package)
+            self.add_single_package(package, delivered)
     
+    #todo: For when client pick up package is implemtend
+    #todo: refactor to distinct from which collection packages are removed
     def remove_single_package(self, package_id: int):
         if package_id not in self._packages:
             raise ValueError(f"Package not in hub {self.city.name}")

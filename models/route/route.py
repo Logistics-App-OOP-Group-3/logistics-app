@@ -21,6 +21,7 @@ class Route:
         self._packages_ids: set[int] = set() 
         self._status = RouteStatus.PLANNED 
         self._stops: list[RouteStop] = stops
+        self._completed_stops: list[bool] = [False] * len(stops)
         self._total_distance = self._calculate_total_distance()
         
         if start_time is None:
@@ -71,6 +72,10 @@ class Route:
     @property   
     def locations(self):
         return [stop.location for stop in self._stops]
+    
+    @property
+    def completed_stop(self):
+        return tuple(self._completed_stops)
 
     def can_deliver_between(self, start_location: str, end_location: str) -> bool:
         
@@ -88,7 +93,27 @@ class Route:
     def add_package(self, package_id: int): 
         if package_id not in self._packages_ids:
             self._packages_ids.add(package_id)
-
+      
+      
+    def get_index_of_next_incompleted_stop(self) -> int:
+        """
+            Returns:
+                index of first incompleted route_stop
+        """
+        idx_first_incompleted = next(stop for stop in self._completed_stops if stop == False)
+        if idx_first_incompleted is None:
+            raise ValueError("Searching for incompleted stop in a completed route.")
+        return idx_first_incompleted
+        
+    def mark_stop_as_complted(self, stop_index: int):
+        if not 0 <= stop_index < len(self._stops):
+            raise ValueError(f"Route stop {stop_index} index out bound!")
+        if self._completed_stops[stop_index] == True:
+            raise ValueError(f"Cannot set stop as completed: Route stop {stop_index} already completed!")
+        self._completed_stops[stop_index] = True
+    
+    # CURRENTLY IGNORED FUNC
+    # DUE TO THE SIMULATION OF COMPLETING ROUTE STOPS
     def get_current_stop(self, current_time: datetime):
         current_stop = None
         for stop in self.stops:
@@ -106,6 +131,11 @@ class Route:
         return weight
 
     def calculate_stops_capacity(self):
+        """
+            List with packages weight at each stop after unloading delivered packages
+            and loading packages for the next stops in the route.
+        """
+        
         return [self.weight_at_stop(i) for i in range(len(self._stops))]
 
     #Brisbane (Oct 10th 06:00h) → Sydney (Oct 10th 20:00h) → Melbourne (Oct 11th 18:00h)
