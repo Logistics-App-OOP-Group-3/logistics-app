@@ -1,6 +1,6 @@
 
 from enums.city import City
-from models.package.package import Package
+from models.package import Package
 from enums.package_status import PackageStatus
 
 class Hub:

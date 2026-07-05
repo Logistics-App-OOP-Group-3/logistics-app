@@ -78,7 +78,8 @@ class CommandFactory:
             return PackageInfoCommand(
                 params,
                 self._app_data,
-                self._package_service
+                self._package_service,
+                self._route_service
             )
 
         if cmd == "routeinfo":

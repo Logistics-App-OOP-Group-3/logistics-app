@@ -8,7 +8,7 @@ from enums.city import City
 
 if TYPE_CHECKING:
     from models.route.route import Route
-    from models.package.package import Package
+    from models.package import Package
 
 
 class ApplicationData:

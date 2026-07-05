@@ -1,6 +1,6 @@
 from __future__ import annotations
 from core.file_service import FileService
-from models.package.package import Package
+from models.package import Package
 from models.route.route import Route
 from models.vehicle import Vehicle
 from models.hub import Hub

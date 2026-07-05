@@ -65,7 +65,7 @@ class Route:
         return self._stops[0].location
     
     @property
-    def current_location(self):
+    def current_location(self) -> str | None:
         """Last completed city"""
         last_stop = None
         for stop in self._stops:
@@ -117,11 +117,11 @@ class Route:
                 break
         return current_stop
 
-    def weight_at_stop(self, stop_index: int) -> int:
+    def weight_at_stop(self, stop_index: int) -> float:
         weight = 0
         for stop in self._stops[:stop_index + 1]:
-            weight += stop.pick_up_weigth
-            weight -= stop.drop_off_weigth
+            weight = round(weight + stop.pick_up_weigth, 2)
+            weight = round(weight - stop.drop_off_weigth, 2)
         return weight
 
     def calculate_stops_capacity(self):
@@ -156,16 +156,19 @@ class Route:
         return ' -> '.join(result)
 
     def __str__(self):
-        result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n-stops info-"]
+        result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}"]
         result.append(f"Status: {self.status.value}")
+        result.append(f"Vehicle: {self._vehicle_id}")
         if self.status != RouteStatus.COMPLETED:
             location = self.current_location
             if location is None:
                 result.append(f"Location: On the way to first location")
             else:
                 result.append(f"Location: {location}")
+               
+        result.append("-stops info-")
         for index, stop in enumerate(self._stops):
-            result.append(f'  {stop} | Truck load: {self.weight_at_stop(index)} kg')
+            result.append(f'  {stop} | Truck load: {self.weight_at_stop(index):.2f} kg')
         return '\n'.join(result)
 
     def _calculate_stops_eta(self, start_time: datetime, stop_duration_hours: int = 1):
