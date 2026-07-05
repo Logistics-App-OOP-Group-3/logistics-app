@@ -7,6 +7,7 @@ class Package:
     def __init__(self, package_id: int, start_location: City, end_location: City, weight: float, contact_info: str):
         self._package_id = package_id
         self._start_location = start_location
+        self._current_location = start_location
         self._end_location = end_location
         
         self._weight = weight
@@ -26,6 +27,12 @@ class Package:
     @property
     def end_location(self):
         return self._end_location
+    @property
+    def current_location(self):
+        return self._current_location
+    @current_location.setter
+    def current_location(self, value: City):
+        self._current_location =  value
     @property
     def weight(self):
         return self._weight
@@ -65,10 +72,14 @@ class Package:
         return f"[{self._package_id}] {self._start_location.value} -> {self._end_location.value}"
         
     def __str__(self):
-        return (
+        return '\n'.join(
             f"Package {self.package_id}: "
-            f"{self.start_location} -> {self.end_location} "
-            f"({self.status.value})"
+            f"{self.start_location.value} -> {self.end_location.value} "
+            f"Status: {self.status.value}"
+            f"Currently at: {self._current_location.value}"
+            f"Weight: {self._weight}"
+            f"Contact: {self._contact_info}"
+            'Route: Not Assigned' if self._route_id is None else f'Route: {self._route_id}'
         )    
         
 ## VALIDATION METHODS    

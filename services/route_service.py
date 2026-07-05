@@ -181,6 +181,7 @@ class RouteService:
             if package.end_location == hub.city:
                 hub.add_single_package(package, delivered=True)
                 package.mark_delivered()
+            package.current_location = stop.location
         
     def mark_route_as_completed(self, route: Route):
         if route.status != RouteStatus.IN_PROGRESS:
@@ -194,7 +195,7 @@ class RouteService:
             raise ValueError(f"Route stop index [{stop_index}] out bound!")
         if stops[stop_index].stop_status == RouteStatus.COMPLETED:
             raise ValueError(f"Cannot mark stop as completed: Route stop [{stop_index}] already completed!")
-        stops[stop_index].stop_status = RouteStatus.COMPLETED    
+        stops[stop_index].stop_status = RouteStatus.COMPLETED
         
     def get_routes_by_status(self, status: RouteStatus):
         return [

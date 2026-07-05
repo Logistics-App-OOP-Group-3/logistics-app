@@ -14,24 +14,7 @@ class PackageInfoCommand(BaseCommand):
         self._package_service = package_service
 
     def execute(self):
-        # Displays detailed package information
-        # Should include:
-        # - package details
-        # - status (NOT_ASSIGNED / ASSIGNED / IN_TRANSIT / DELIVERED)
-        # - assigned route if any
-        
         package_id = try_parse_int(self.params[0])
         package = self._package_service.get_package(package_id)
 
-        result = [
-            str(package),
-            f'Weight: {package.weight} kg',
-            f'Contact: {package.contact_info}'         
-        ] 
-
-        if package.route_id is None:
-            result.append('Route: Not Assigned')
-        else:
-            result.append(f'Route: {package.route_id}')
-
-        return '\n'.join(result)
+        return str(package)
