@@ -63,6 +63,15 @@ class Route:
     @property                         
     def start_location(self):
         return self._stops[0].location
+    
+    @property
+    def current_location(self):
+        """Last completed city"""
+        last_stop = None
+        for stop in self._stops:
+            if stop.stop_status == RouteStatus.COMPLETED:
+                last_stop = stop
+        return last_stop.location.value if last_stop is not None else None
         
     @property                         
     def end_location(self):
@@ -97,13 +106,6 @@ class Route:
                 return i
         raise ValueError("Searching for incompleted stop in a completed route.")
         
-    def mark_stop_as_complted(self, stop_index: int):
-        if not 0 <= stop_index < len(self._stops):
-            raise ValueError(f"Route stop {stop_index} index out bound!")
-        if self._stops[stop_index].stop_status == RouteStatus.COMPLETED:
-            raise ValueError(f"Cannot mark stop as completed: Route stop [{stop_index}] already completed!")
-        self._stops[stop_index].stop_status = RouteStatus.COMPLETED
-    
     # CURRENTLY IGNORED FUNC
     # DUE TO THE SIMULATION OF COMPLETING ROUTE STOPS
     def get_current_stop(self, current_time: datetime):
@@ -155,6 +157,13 @@ class Route:
 
     def __str__(self):
         result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}\n-stops info-"]
+        result.append(f"Status: {self.status.value}")
+        if self.status != RouteStatus.COMPLETED:
+            location = self.current_location
+            if location is None:
+                result.append(f"Location: On the way to first location")
+            else:
+                result.append(f"Location: {location}")
         for index, stop in enumerate(self._stops):
             result.append(f'  {stop} | Truck load: {self.weight_at_stop(index)} kg')
         return '\n'.join(result)
@@ -162,7 +171,7 @@ class Route:
     def _calculate_stops_eta(self, start_time: datetime, stop_duration_hours: int = 1):
         self._stops[0].arrival_time = start_time
         self._stops[0].departure_time = start_time + timedelta(hours=stop_duration_hours)
-
+        self._stops[0].stop_status = RouteStatus.IN_PROGRESS
         for i in range(1, len(self._stops)):
             previous_stop = self._stops[i - 1]
             current_stop = self._stops[i]

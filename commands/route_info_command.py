@@ -1,10 +1,13 @@
 from commands.base.base_command import BaseCommand
-from commands.validation_helper import validate_params_count
+from commands.validation_helper import validate_params_count, try_parse_int
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from services.route_service import RouteService
 
 class RouteInfoCommand(BaseCommand):
 
-    def __init__(self, params, app_data, route_service):
+    def __init__(self, params, app_data, route_service :RouteService):
         # Expected input: <route_id>
         validate_params_count(params, 1, "RouteInfoCommand")
         super().__init__(params, app_data)
@@ -12,7 +15,7 @@ class RouteInfoCommand(BaseCommand):
 
     def execute(self):
 
-        route_id = int(self.params[0])
+        route_id = try_parse_int(self.params[0])
 
         # Displays detailed route information
         # Should include:
@@ -23,9 +26,7 @@ class RouteInfoCommand(BaseCommand):
 
         route = self._route_service.get_route(route_id)
         
-        result = [str(route),
-                  f'Status: {route.status.value}'
-                  ]
+        result = [str(route)]
 
         if route.vehicle_id is None:
             result.append('Assigned truck: Not Assigned')

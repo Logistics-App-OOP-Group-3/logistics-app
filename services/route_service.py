@@ -150,24 +150,24 @@ class RouteService:
                 self.load_route_packages_from_stop(route, stop_idx)
             elif stop_idx == len(route.stops) - 1: # last stop
                 self.unload_route_packages_from_stop(route, stop_idx)
-                self.complete_route(route.route_id)
+                self.mark_route_as_completed(route)
             else:
                 self.unload_route_packages_from_stop(route, stop_idx)
                 self.load_route_packages_from_stop(route, stop_idx)
-            route.mark_stop_as_complted(stop_idx)
+                
+            self.mark_stop_as_completed(route, stop_idx)
                 
 
-
-    def load_route_packages_from_stop(self, route: Route, stop_id: int):
-        stop = route.stops[stop_id]
+    def load_route_packages_from_stop(self, route: Route, stop_index: int):
+        stop = route.stops[stop_index]
         hub = self._app_data.find_hub(stop.location)
         
         for package_id in route.packages_ids:
             if package_id in hub.packages_ids:
                 hub.remove_single_package(package_id)
     
-    def unload_route_packages_from_stop(self, route: Route, stop_id: int):
-        stop = route.stops[stop_id]
+    def unload_route_packages_from_stop(self, route: Route, stop_index: int):
+        stop = route.stops[stop_index]
         hub = self._app_data.find_hub(stop.location)
         
         for package_id in route.packages_ids:
@@ -175,13 +175,19 @@ class RouteService:
             if package.end_location == hub.city:
                 hub.add_single_package(package, delivered=True)
         
-    def complete_route(self, route_id: int):
-        route = self.get_route(route_id)
-        
+    def mark_route_as_completed(self, route: Route):
         if route.status != RouteStatus.IN_PROGRESS:
             raise ValueError("Only routes in progress can be completed")
         
         route.status = RouteStatus.COMPLETED
+        
+    def mark_stop_as_completed(self,route :Route , stop_index: int):
+        stops = route.stops
+        if not 0 <= stop_index < len(stops):
+            raise ValueError(f"Route stop index [{stop_index}] out bound!")
+        if stops[stop_index].stop_status == RouteStatus.COMPLETED:
+            raise ValueError(f"Cannot mark stop as completed: Route stop [{stop_index}] already completed!")
+        stops[stop_index].stop_status = RouteStatus.COMPLETED    
         
     def get_routes_by_status(self, status: RouteStatus):
         return [
