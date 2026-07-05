@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from enums.route_status import RouteStatus
 
 if TYPE_CHECKING:
     from datetime import datetime
     from enums.city import City
-    from enums.route_status import RouteStatus
     from models.package.package import Package
 
 class RouteStop:
@@ -37,7 +37,7 @@ class RouteStop:
     @property
     def stop_status(self):
         return self._stop_status
-    @stop_status
+    @stop_status.setter
     def stop_status(self, value: RouteStatus):
         self._stop_status = value
     

@@ -92,10 +92,10 @@ class Route:
       
     def get_index_of_next_incompleted_stop(self) -> int:
         """ Returns: index of first incompleted route_stop """
-        idx_first_incompleted = next(stop for stop in self._stops if stop.stop_status == RouteStatus.IN_PROGRESS)
-        if idx_first_incompleted is None:
-            raise ValueError("Searching for incompleted stop in a completed route.")
-        return idx_first_incompleted
+        for i in range(len(self._stops)):
+            if self._stops[i].stop_status == RouteStatus.IN_PROGRESS:
+                return i
+        raise ValueError("Searching for incompleted stop in a completed route.")
         
     def mark_stop_as_complted(self, stop_index: int):
         if not 0 <= stop_index < len(self._stops):

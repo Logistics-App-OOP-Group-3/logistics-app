@@ -9,6 +9,7 @@ from commands.route_info_command import RouteInfoCommand
 from commands.unassigned_packages_command import UnassignedPackagesCommand
 from commands.hubs_info_command import HubInfoCommand
 from commands.inspect_hub_command import InspectHubCommand
+from commands.advance_routes_command import AdvanceRoutesCommand
 from services.route_service import RouteService
 from services.package_service import PackageService
 from services.vehicle_service import VehicleService
@@ -85,6 +86,13 @@ class CommandFactory:
                 params,
                 self._app_data,
                 self._route_service,
+            )
+        
+        if cmd == "advanceroutes":
+            return AdvanceRoutesCommand(
+                params,
+                self._app_data,
+                self._route_service
             )
 
         raise ValueError(f"Invalid command name: {cmd}!")
