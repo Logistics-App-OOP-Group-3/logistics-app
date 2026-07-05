@@ -16,22 +16,9 @@ class RouteInfoCommand(BaseCommand):
     def execute(self):
 
         route_id = try_parse_int(self.params[0])
-
-        # Displays detailed route information
-        # Should include:
-        # - route stops
-        # - assigned truck
-        # - assigned packages
-        # - route status
-
         route = self._route_service.get_route(route_id)
         
         result = [str(route)]
-
-        if route.vehicle_id is None:
-            result.append('Assigned truck: Not Assigned')
-        else:
-            result.append(f'Assigned truck: {route.vehicle_id}')
 
         if not route.packages_ids:
             result.append('Packages: No packages have been assigned to this route.')

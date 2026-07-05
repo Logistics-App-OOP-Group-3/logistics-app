@@ -1,5 +1,5 @@
 from __future__ import annotations
-from models.package.package import Package
+from models.package import Package
 from enums.package_status import PackageStatus
 from typing import TYPE_CHECKING
 

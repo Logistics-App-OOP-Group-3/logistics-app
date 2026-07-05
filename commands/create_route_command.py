@@ -36,10 +36,10 @@ class CreateRouteCommand(BaseCommand):
             
         self._route_service.assign_truck_to_route(route, vehicle)
         self._route_service.assign_packages_from_hubs(route, vehicle)
+        self._route_service.start_route(route) # status init method
                         
         self.app_data.add_route(route)
         return (
             f"Route created successfully.\n"
-            f"{route}\n"
-            f"Vehicle ID: {vehicle.vehicle_id}"
+            f"{route}"
         )

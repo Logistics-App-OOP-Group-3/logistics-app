@@ -5,9 +5,10 @@ from datetime  import datetime
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from models.package.package import Package
+    from models.package import Package
     from core.application_data import ApplicationData
     from models.vehicle import Vehicle
+    from enums.city import City
 
 class RouteService:
     
@@ -21,7 +22,6 @@ class RouteService:
         route_id = self._app_data.generate_route_id()
         
         route = Route(route_id, stops, start_time)
-        self.start_route(route)
           
         return route
 
@@ -169,7 +169,7 @@ class RouteService:
         for package_id in route.packages_ids:
             if package_id in hub.packages_ids:
                 hub.remove_single_package(package_id)
-                package = self._app_data.find_package(package)
+                package = self._app_data.find_package(package_id)
                 package.start_delivery()
     
     def unload_route_packages_to_stop(self, route: Route, stop_index: int):
@@ -203,5 +203,13 @@ class RouteService:
             for route in self._app_data.routes.values()
             if route.status == status
         ]
+    def get_eta_for_location(self, route_id: int, location: City):
+        route = self.get_route(route_id)
+        for stop in route.stops:
+            if stop.location == location:
+                return stop.arrival_time
+        raise ValueError(f"Can't find eta for location, because location is not in the route stops!")
+        
+            
     def get_routes_in_progress(self):
         return self.get_routes_by_status(RouteStatus.IN_PROGRESS)
