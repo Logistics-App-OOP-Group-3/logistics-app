@@ -39,12 +39,9 @@ class CreatePackageCommand(BaseCommand):
         hub.add_single_package(package)
         
         result = [
-            "Package created.",
-            f"Package ID: {package.package_id}",
-            f"From: {start_location.value} -> To: {end_location.value}",
-            f"Weight: {weight} kg"
-        ]   
-        
+            f"Package created successfully.",
+            str(package)
+            ]
         
         routes = self._route_service.find_routes_for_package(package)
         if routes:
@@ -61,6 +58,7 @@ class CreatePackageCommand(BaseCommand):
             return "\n".join(result)
         
         print('\n'.join(result))
+        
         input_route_id = val_help.try_parse_int(input("Enter route id to assign it to or 0 to leave at hub:\n  "))
         
         if input_route_id != 0:

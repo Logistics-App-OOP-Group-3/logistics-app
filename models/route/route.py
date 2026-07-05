@@ -151,18 +151,18 @@ class Route:
             line = f"{stop.location.value} {format_dt(stop.arrival_time)}"
             if vehicle_max_capacity:
                 free_capacity = vehicle_max_capacity - capacity
-                line += f"[{free_capacity} kg]"
+                line += f" Free: [{free_capacity} kg]"
             result.append(line)
         return ' -> '.join(result)
 
     def __str__(self):
         result = [f"Route {self._route_id}: {' -> '.join(c.value for c in self.locations)}"]
         result.append(f"Status: {self.status.value}")
-        result.append(f"Vehicle: {self._vehicle_id}")
+        result.append(f"Vehicle ID: {self._vehicle_id}")
         if self.status != RouteStatus.COMPLETED:
             location = self.current_location
             if location is None:
-                result.append(f"Location: On the way to first location")
+                result.append(f"Location: On the way to the first location")
             else:
                 result.append(f"Location: {location}")
                
