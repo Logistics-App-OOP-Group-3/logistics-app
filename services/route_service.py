@@ -21,6 +21,7 @@ class RouteService:
         route_id = self._app_data.generate_route_id()
         
         route = Route(route_id, stops, start_time)
+        self.start_route(route)
           
         return route
 
@@ -50,13 +51,13 @@ class RouteService:
         route = self.get_route(route_id)
 
         if package.route_id is not None:
-            raise ValueError("Package already assigned")
+            raise ValueError("Package already assigned!")
 
         if not route.can_deliver_between(
             package.start_location,
             package.end_location
         ):
-            raise ValueError("Route cannot deliver this package")
+            raise ValueError("Route cannot deliver this package!")
 
         pickup_stop = next(s for s in route.stops if s.location == package.start_location)
         dropoff_stop = next(s for s in route.stops if s.location == package.end_location)
@@ -64,7 +65,7 @@ class RouteService:
         dropoff_index = route.stops.index(dropoff_stop)
         
         if route.vehicle_id is None:
-            raise ValueError("Route has no vehicle assigned")
+            raise ValueError("Route has no vehicle assigned!")
         
 
         vehicle = self._app_data.find_vehicle(route.vehicle_id)
@@ -73,7 +74,7 @@ class RouteService:
         for i in range(pickup_index, dropoff_index):  
             if route.weight_at_stop(i) + package.weight > vehicle.max_capacity:
                 raise ValueError(
-                    f"Package exceeds vehicle capacity at stop {route.stops[i].location.name}"
+                    f"Package exceeds vehicle capacity at stop {route.stops[i].location.name}!"
                 )
 
         route.add_package(package.package_id)
@@ -108,8 +109,8 @@ class RouteService:
 
                 # Niki cod 
                 if dropoff_stop is None:
-                    raise ValueError(f"Route is invalid: missing stop for {package.end_location} I told you so"
-                                     f"Trqbva qko da gurmi. Programata da krashne.")
+                    raise ValueError(f"Route is invalid: missing stop for {package.end_location} I told you so!"
+                                     f"Trqbva qko da gurmi. Programata da krashne!")
 
                 route.add_package(package.package_id)
                 package.assign_to_route(route.route_id)
@@ -121,24 +122,27 @@ class RouteService:
     def assign_truck_to_route(self, route: Route, vehicle: Vehicle):
         
         if route.vehicle_id is not None:
-            raise ValueError("Route already has a truck")
+            raise ValueError("Route already has a truck!")
         
         if vehicle.route_id is not None:
-            raise ValueError("Truck already assigned")
+            raise ValueError("Truck already assigned!")
 
         route.vehicle_id = vehicle.vehicle_id
         vehicle.route_id = route.route_id
 
-    def start_route(self, route_id: int):
-        route = self.get_route(route_id)
-        
+    def start_route(self, route: Route):
         if route.vehicle_id is None:
-            raise ValueError("Cannot start a route without a truck assigned to it")
+            raise ValueError("Cannot start a route without a truck assigned to it!")
         
         if route.status == RouteStatus.COMPLETED:
-            raise ValueError("Cannot start a route that is completed")
+            raise ValueError("Cannot start a route that is completed!")
         
         route.status = RouteStatus.IN_PROGRESS
+        stops = route.stops
+        for stop in stops:
+            if stop.stop_status == RouteStatus.COMPLETED:
+                raise ValueError("Cannot mark route stop InProgress that is Completed!")
+            stop.stop_status = RouteStatus.IN_PROGRESS
         
     # SIMULATION FUNC
     def complete_all_routes_next_stop(self):
@@ -149,10 +153,10 @@ class RouteService:
             if stop_idx == 0: # first stop
                 self.load_route_packages_from_stop(route, stop_idx)
             elif stop_idx == len(route.stops) - 1: # last stop
-                self.unload_route_packages_from_stop(route, stop_idx)
+                self.unload_route_packages_to_stop(route, stop_idx)
                 self.mark_route_as_completed(route)
             else:
-                self.unload_route_packages_from_stop(route, stop_idx)
+                self.unload_route_packages_to_stop(route, stop_idx)
                 self.load_route_packages_from_stop(route, stop_idx)
                 
             self.mark_stop_as_completed(route, stop_idx)
@@ -165,8 +169,10 @@ class RouteService:
         for package_id in route.packages_ids:
             if package_id in hub.packages_ids:
                 hub.remove_single_package(package_id)
+                package = self._app_data.find_package(package)
+                package.start_delivery()
     
-    def unload_route_packages_from_stop(self, route: Route, stop_index: int):
+    def unload_route_packages_to_stop(self, route: Route, stop_index: int):
         stop = route.stops[stop_index]
         hub = self._app_data.find_hub(stop.location)
         
@@ -174,10 +180,11 @@ class RouteService:
             package = self._app_data.find_package(package_id)
             if package.end_location == hub.city:
                 hub.add_single_package(package, delivered=True)
+                package.mark_delivered()
         
     def mark_route_as_completed(self, route: Route):
         if route.status != RouteStatus.IN_PROGRESS:
-            raise ValueError("Only routes in progress can be completed")
+            raise ValueError("Only routes in progress can be completed!")
         
         route.status = RouteStatus.COMPLETED
         
