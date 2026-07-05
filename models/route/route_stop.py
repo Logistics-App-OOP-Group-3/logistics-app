@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from datetime import datetime
     from enums.city import City
+    from enums.route_status import RouteStatus
     from models.package.package import Package
 
 class RouteStop:
@@ -20,6 +21,8 @@ class RouteStop:
         
         self._pick_up_weigth = 0
         self._drop_off_weigth = 0
+        
+        self._stop_status = RouteStatus.PLANNED
     
     @property
     def location(self):
@@ -31,6 +34,12 @@ class RouteStop:
     @property
     def drop_off_weigth(self):
         return self._drop_off_weigth
+    @property
+    def stop_status(self):
+        return self._stop_status
+    @stop_status
+    def stop_status(self, value: RouteStatus):
+        self._stop_status = value
     
     def add_pick_up_weigth(self, value: int):
         self._pick_up_weigth += value

@@ -21,7 +21,6 @@ class Route:
         self._packages_ids: set[int] = set() 
         self._status = RouteStatus.PLANNED 
         self._stops: list[RouteStop] = stops
-        self._completed_stops: list[bool] = [False] * len(stops)
         self._total_distance = self._calculate_total_distance()
         
         if start_time is None:
@@ -177,6 +176,8 @@ class Route:
 
             current_stop.arrival_time = arrival_time
             current_stop.departure_time = arrival_time + timedelta(hours=stop_duration_hours)
+            current_stop.stop_status = RouteStatus.IN_PROGRESS
+        self._status = RouteStatus.IN_PROGRESS
             
     def _calculate_total_distance(self) -> int:
         total = 0
