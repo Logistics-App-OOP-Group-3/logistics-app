@@ -85,13 +85,14 @@ class Route:
         
         return self.locations.index(start_location) < self.locations.index(end_location)
 
-    def add_package(self, package_id: int): 
-        if package_id not in self._packages_ids:
-            self._packages_ids.add(package_id)
+    def add_package(self, package_id: int):
+        if package_id in self._packages_ids:
+            raise ValueError(f"Cannot add existing package [{package_id}] to the route")
+        self._packages_ids.add(package_id)
       
     def get_index_of_next_incompleted_stop(self) -> int:
         """ Returns: index of first incompleted route_stop """
-        idx_first_incompleted = next(stop for stop in self._completed_stops if stop == False)
+        idx_first_incompleted = next(stop for stop in self._stops if stop.stop_status == RouteStatus.IN_PROGRESS)
         if idx_first_incompleted is None:
             raise ValueError("Searching for incompleted stop in a completed route.")
         return idx_first_incompleted
@@ -99,9 +100,9 @@ class Route:
     def mark_stop_as_complted(self, stop_index: int):
         if not 0 <= stop_index < len(self._stops):
             raise ValueError(f"Route stop {stop_index} index out bound!")
-        if self._completed_stops[stop_index] == True:
-            raise ValueError(f"Cannot set stop as completed: Route stop {stop_index} already completed!")
-        self._completed_stops[stop_index] = True
+        if self._stops[stop_index].stop_status == RouteStatus.COMPLETED:
+            raise ValueError(f"Cannot mark stop as completed: Route stop [{stop_index}] already completed!")
+        self._stops[stop_index].stop_status = RouteStatus.COMPLETED
     
     # CURRENTLY IGNORED FUNC
     # DUE TO THE SIMULATION OF COMPLETING ROUTE STOPS
