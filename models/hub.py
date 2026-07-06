@@ -88,13 +88,18 @@ class Hub:
     
     #todo: For when client pick up package is implemtend
     #todo: refactor to distinct from which collection packages are removed
-    def remove_single_package(self, package_id: int):
-        if package_id not in self._packages:
-            raise ValueError(f"Package not in hub {self.city.name}")
+    def remove_single_package(self, package_id: int, from_delivered: bool = False):
+        #Niki added from delivered so we can decide here from which dict to remove from
+        target_dict = self._delivered_packages if from_delivered else self._packages
 
-        package = self._packages.pop(package_id)
-        self._packages_weigth -= package.weight
-        
+        if package_id not in target_dict:
+            raise ValueError(f"Package {package_id} not found in {self._city.name}")
+
+        package = self.target_dict.pop(package_id)
+        if not from_delivered: 
+            self._packages_weigth -= package.weight
+        return package
+
     def remove_multiple_packages(self, packages_ids:list[int]):
         for package_id in packages_ids:
             self.remove_single_package(package_id)
