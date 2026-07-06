@@ -7,6 +7,7 @@ class Package:
     MAX_PACKAGE_WEIGHT = 5001
     
     def __init__(self, package_id: int, start_location: City, end_location: City, weight: float, contact_info: str):
+        #TODO: validate start_location != end_location
         self._package_id = package_id
         self._start_location = start_location
         self._current_location = start_location
