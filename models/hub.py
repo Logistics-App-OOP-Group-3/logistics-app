@@ -14,7 +14,7 @@ class Hub:
         self._city = city
         self._packages: dict[int, Package] = dict()
         self._delivered_packages: dict[int, Package] = dict()
-        self._packages_weigth: int = 0
+        self._packages_weight: int = 0
 
 ## PROPERTY   
     @property
@@ -27,8 +27,14 @@ class Hub:
     def packages(self):
         return tuple(self._packages.values())
     @property
-    def packages_weigth(self):
-        return self._packages_weigth
+    def delivered_packages_ids(self):
+        return tuple(self._delivered_packages.keys())
+    @property
+    def delivered_packages(self):
+        return tuple(self._delivered_packages.values())
+    @property
+    def packages_weight(self):
+        return self._packages_weight
     @property                                #calculated
     def package_count(self):
         return len(self._packages)
@@ -79,7 +85,7 @@ class Hub:
                                   f"Package {package.package_id} already in {self._city.value} hub!")
                  
             self._packages[package.package_id] = package
-            self._packages_weigth += package.weight
+            self._packages_weight += package.weight
 
             
     def add_multiple_packages(self, packages: list[Package], delivered: bool = False):
@@ -97,7 +103,7 @@ class Hub:
 
         package = target_dict.pop(package_id)
         if not from_delivered: 
-            self._packages_weigth -= package.weight
+            self._packages_weight -= package.weight
         return package
 
     def remove_multiple_packages(self, packages_ids:list[int]):
@@ -109,7 +115,7 @@ class Hub:
     def __str__(self):
         return (
             f"Hub: {self.city.name}"
-            f" - Packages: {self.package_count}, Total_weigth: {self.packages_weigth}"
+            f" - Packages: {self.package_count}, Total_weigth: {self.packages_weight}"
             )
         
     def _total_not_assigned_weight_by_end_location(self) -> dict[City,tuple[int, int]]:

@@ -4,14 +4,17 @@ from enums.city import City
 
 class Package:
     
+    MAX_PACKAGE_WEIGHT = 5001
+    
     def __init__(self, package_id: int, start_location: City, end_location: City, weight: float, contact_info: str):
         self._package_id = package_id
         self._start_location = start_location
         self._current_location = start_location
         self._end_location = end_location
         
+        self._ensure_valid_weight(weight)
         self._weight = weight
-        self._contact_info = contact_info
+        self.contact_info = contact_info
         
         self._route_id = None
         
@@ -89,13 +92,18 @@ class Package:
         return '\n'.join(result)
            
         
-## VALIDATION METHODS    
+## VALIDATION METHODS
+    @staticmethod
     def _ensure_valid_contact_info(value: str):
         if not value:
             raise ValueError("Package contact info cannot be empty!")
         if not 5 <= len(value) <= 100:
             raise ValueError("Illegal package contact info length [5:100]")
-    
+    @staticmethod
     def _ensure_valid_route_id(value: int):
         if not value:
             raise ValueError("Package route id cannot be None!")
+        
+    def _ensure_valid_weight(self, value: float):
+        if not 0 < value < self.MAX_PACKAGE_WEIGHT:
+            raise ValueError(f"Illegal package weight (0:{self.MAX_PACKAGE_WEIGHT})")
