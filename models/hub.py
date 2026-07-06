@@ -73,6 +73,13 @@ class Hub:
                 
                 
     def add_single_package(self, package: Package, delivered: bool = False):
+        """
+            Adds package to the hub
+                param[1]: delivered
+                False: package left from client for delivery
+                True: package left from delivery service
+        """
+        
         if delivered == True:
             if package.package_id in self._delivered_packages:
                 raise ValueError(f"Adding delivered package to hub error: "
@@ -86,16 +93,15 @@ class Hub:
                  
             self._packages[package.package_id] = package
             self._packages_weight += package.weight
-
-            
-    def add_multiple_packages(self, packages: list[Package], delivered: bool = False):
-        for package in packages:
-            self.add_single_package(package, delivered)
     
-    #todo: For when client pick up package is implemtend
-    #todo: refactor to distinct from which collection packages are removed
     def remove_single_package(self, package_id: int, from_delivered: bool = False):
-        #Niki added from delivered so we can decide here from which dict to remove from
+        """
+            Remove package from the hub.
+                param[1]: from_delivered
+                False: package taken out to be delivered
+                True: client receiving already delivered package
+        """
+        
         target_dict = self._delivered_packages if from_delivered else self._packages
 
         if package_id not in target_dict:
@@ -105,10 +111,6 @@ class Hub:
         if not from_delivered: 
             self._packages_weight -= package.weight
         return package
-
-    def remove_multiple_packages(self, packages_ids:list[int]):
-        for package_id in packages_ids:
-            self.remove_single_package(package_id)
             
 ## PRIVATE METHODS
 
