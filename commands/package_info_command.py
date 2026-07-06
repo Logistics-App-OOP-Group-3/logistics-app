@@ -1,3 +1,4 @@
+from __future__ import annotations
 from commands.base.base_command import BaseCommand
 from commands.validation_helper import validate_params_count, try_parse_int
 from typing import TYPE_CHECKING
@@ -8,7 +9,7 @@ if TYPE_CHECKING:
 
 class PackageInfoCommand(BaseCommand):
 
-    def __init__(self, params, app_data, package_service: PackageService, route_service: RouteService):
+    def __init__(self, params, app_data, package_service: "PackageService", route_service: "RouteService"):
         # Expected input: <package_id>
         validate_params_count(params, 1, "PackageInfoCommand")
         super().__init__(params, app_data)
