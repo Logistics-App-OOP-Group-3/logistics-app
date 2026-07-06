@@ -21,6 +21,7 @@ class Route:
         self._packages_ids: set[int] = set() 
         self._status = RouteStatus.PLANNED 
         self._stops: list[RouteStop] = stops
+
         self._total_distance = self._calculate_total_distance()
         
         if start_time is None:

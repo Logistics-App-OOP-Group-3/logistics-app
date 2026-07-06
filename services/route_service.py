@@ -22,7 +22,7 @@ class RouteService:
         route_id = self._app_data.generate_route_id()
         
         route = Route(route_id, stops, start_time)
-          
+        self._app_data.add_route(route) 
         return route
 
     def get_route(self, route_id: int) -> Route:
