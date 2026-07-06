@@ -5,7 +5,6 @@ from enums.route_status import RouteStatus
 if TYPE_CHECKING:
     from datetime import datetime
     from enums.city import City
-    from models.package import Package
 
 class RouteStop:
     
