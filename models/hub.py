@@ -95,7 +95,7 @@ class Hub:
         if package_id not in target_dict:
             raise ValueError(f"Package {package_id} not found in {self._city.name}")
 
-        package = self.target_dict.pop(package_id)
+        package = target_dict.pop(package_id)
         if not from_delivered: 
             self._packages_weigth -= package.weight
         return package
