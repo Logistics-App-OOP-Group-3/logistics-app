@@ -2,7 +2,6 @@ import unittest
 from models.package import Package
 from enums.package_status import PackageStatus
 from enums.city import City
-from unittest.mock import MagicMock, patch
 
 VALID_PACKAGE_ID = 1
 VALID_START_LOCATION = City.MEL
