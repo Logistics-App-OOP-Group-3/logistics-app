@@ -7,12 +7,11 @@ class Package:
     MAX_PACKAGE_WEIGHT = 5001
     
     def __init__(self, package_id: int, start_location: City, end_location: City, weight: float, contact_info: str):
-        #TODO: validate start_location != end_location
         self._package_id = package_id
+        self._ensure_valid_end_location(start_location, end_location)
         self._start_location = start_location
         self._current_location = start_location
         self._end_location = end_location
-        
         self._ensure_valid_weight(weight)
         self._weight = weight
         self.contact_info = contact_info
@@ -108,3 +107,8 @@ class Package:
     def _ensure_valid_weight(self, value: float):
         if not 0 < value < self.MAX_PACKAGE_WEIGHT:
             raise ValueError(f"Illegal package weight (0:{self.MAX_PACKAGE_WEIGHT})")
+        
+    def _ensure_valid_end_location(self, start_location: City, end_location: City):
+        if start_location == end_location:
+            raise ValueError(f"Illegal end_location[{end_location.value}]: "
+                             f"can't be the same as start_location[{start_location.value}]!")

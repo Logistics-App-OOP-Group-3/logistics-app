@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import MagicMock, patch
 from models.vehicle import Vehicle
 
 VALID_ID = 1001
