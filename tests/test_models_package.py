@@ -14,14 +14,6 @@ VALID_STATUS = PackageStatus.ASSIGNED
 DEFAULT_STATUS = PackageStatus.NOT_ASSIGNED
 DEFAULT_ROUTE_ID = None
 
-# PACKAGE = Package(
-#     VALID_PACKAGE_ID,
-#     VALID_START_LOCATION,
-#     VALID_END_LOCATION,
-#     VALID_WEIGHT,
-#     VALID_CONTACT_INFO
-#     )
-
 class Initializer_Should(unittest.TestCase):
     
     def test_assignValues(self):
