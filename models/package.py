@@ -13,7 +13,7 @@ class Package:
         self._current_location = start_location
         self._end_location = end_location
         self._ensure_valid_weight(weight)
-        self._weight = weight
+        self._weight = round(weight, 2)
         self.contact_info = contact_info
         
         self._route_id = None
@@ -55,13 +55,10 @@ class Package:
     @property
     def route_id(self):
         return self._route_id
-    @route_id.setter
-    def route_id(self, value: int):
-        self._ensure_valid_route_id(value)
-        self._route_id = value
 
 ## PUBLIC METHODS
     def assign_to_route(self, route_id: int):
+        self._ensure_valid_route_id(route_id)
         self._route_id = route_id
         self.status = PackageStatus.ASSIGNED
         
@@ -99,16 +96,18 @@ class Package:
             raise ValueError("Package contact info cannot be empty!")
         if not 5 <= len(value) <= 100:
             raise ValueError("Illegal package contact info length [5:100]")
+
     @staticmethod
     def _ensure_valid_route_id(value: int):
         if not value:
             raise ValueError("Package route id cannot be None!")
         
-    def _ensure_valid_weight(self, value: float):
-        if not 0 < value < self.MAX_PACKAGE_WEIGHT:
-            raise ValueError(f"Illegal package weight (0:{self.MAX_PACKAGE_WEIGHT})")
-        
-    def _ensure_valid_end_location(self, start_location: City, end_location: City):
+    @staticmethod
+    def _ensure_valid_end_location(start_location: City, end_location: City):
         if start_location == end_location:
             raise ValueError(f"Illegal end_location[{end_location.value}]: "
                              f"can't be the same as start_location[{start_location.value}]!")
+
+    def _ensure_valid_weight(self, value: float):
+        if not 0 < value < self.MAX_PACKAGE_WEIGHT:
+            raise ValueError(f"Illegal package weight (0:{self.MAX_PACKAGE_WEIGHT})")
