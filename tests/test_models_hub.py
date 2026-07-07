@@ -161,8 +161,6 @@ class info_not_assigned_packages_by_end_location_Should(unittest.TestCase):
         self.mock_package2.weight = 50.50
         self.mock_package2.end_location = City.ADL
         self.mock_package2.status = PackageStatus.NOT_ASSIGNED
-        
-        
         self.hub.add_single_package(self.mock_package)
         self.hub.add_single_package(self.mock_package2)
         
@@ -233,5 +231,44 @@ class info_not_assigned_packages_by_end_location_Should(unittest.TestCase):
         
         
 class FindPackagesForLocations_Should(unittest.TestCase):
-    ...
-    #TODO
+    def setUp(self):
+        
+        # Arrange
+        self.hub = Hub(VALID_CITY)
+        self.mock_package = Mock()
+        self.mock_package.package_id = 1
+        self.mock_package.weight = 50
+        self.mock_package.end_location = City.ADL
+        self.mock_package.route_id = 1
+        self.mock_package2 = Mock()
+        self.mock_package2.package_id = 2
+        self.mock_package2.weight = 50.50
+        self.mock_package2.end_location = City.ADL
+        self.mock_package2.route_id = None
+        self.hub.add_single_package(self.mock_package)
+        self.hub.add_single_package(self.mock_package2)
+        
+    def test_filterOnlyNotAssigned(self):
+        
+        # Act
+        result = self.hub.find_packages_for_locations([City.ADL, City.ASP])
+
+        # Assert
+        self.assertEqual(result, [self.mock_package2])
+        
+    def test_findForDifferentEndlocations(self):
+        
+        # Arrange
+        self.mock_package3 = Mock()
+        self.mock_package3.package_id = 3
+        self.mock_package3.weight = 50
+        self.mock_package3.end_location = City.ASP
+        self.mock_package3.route_id = None
+        self.hub.add_single_package(self.mock_package3)
+        
+        # Act
+        result = self.hub.find_packages_for_locations([City.ADL, City.ASP])
+
+        # Assert
+        self.assertEqual(result, [self.mock_package2, self.mock_package3])
+        
