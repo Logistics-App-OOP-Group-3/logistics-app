@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock
 from models.hub import Hub
 from enums.city import City
 from enums.package_status import PackageStatus
