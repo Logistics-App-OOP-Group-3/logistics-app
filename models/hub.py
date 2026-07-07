@@ -116,8 +116,8 @@ class Hub:
 
     def __str__(self):
         return (
-            f"Hub: {self.city.name}"
-            f" - Packages: {self.package_count}, Total_weigth: {self.packages_weight}"
+            f"Hub: {self.city.value}"
+            f" - Packages: {self.package_count}, Total_weight: {self.packages_weight}"
             )
         
     def _total_not_assigned_weight_by_end_location(self) -> dict[City,tuple[int, int]]:

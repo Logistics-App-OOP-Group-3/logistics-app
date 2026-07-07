@@ -137,10 +137,14 @@ class Str_Should(unittest.TestCase):
         hub = Hub(VALID_CITY)
         
         # Act
-        result = str(hub)
+        result = str(hub).lower()
         
         # Assert
         self.assertIsInstance(result, str)
+        self.assertIn(VALID_CITY.value.lower(), result)
+        self.assertIn('package', result)
+        self.assertIn('weight', result)
+
         
 class info_not_assigned_packages_by_end_location_Should(unittest.TestCase):
     def setUp(self):
