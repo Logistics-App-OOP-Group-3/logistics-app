@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from services.package_service import PackageService
 from enums.package_status import PackageStatus
+from models.package import Package
 
 class Initializer_Should(unittest.TestCase):
     def test_nothingBreaks(self):
@@ -20,7 +21,7 @@ class CreatePackage_Should(unittest.TestCase):
         # mock package class inside package_service
         patcher = patch("services.package_service.Package")
         self.mock_package_cls = patcher.start()
-        # ran at end of setUp
+        # ran at end of setUp on each test
         self.addCleanup(patcher.stop)
         
         self.mock_app_data.generate_package_id.return_value = 1
@@ -58,15 +59,15 @@ class GetPackageMethods_Should(unittest.TestCase):
         self.mock_app_data = MagicMock()
         self.package_service = PackageService(self.mock_app_data)
         
-        self.mock_package1 = MagicMock()
+        self.mock_package1 = MagicMock(spec_set=Package)
         self.mock_package1.package_id = 1
         self.mock_package1.status = PackageStatus.IN_TRANSIT
         
-        self.mock_package2 = MagicMock()
+        self.mock_package2 = MagicMock(spec_set=Package)
         self.mock_package2.package_id = 2
         self.mock_package2.status = PackageStatus.IN_TRANSIT
         
-        self.mock_package3 = MagicMock()
+        self.mock_package3 = MagicMock(spec_set=Package)
         self.mock_package3.package_id = 3
         self.mock_package3.status = PackageStatus.NOT_ASSIGNED
         
@@ -121,7 +122,7 @@ class GetPackageMethods_Should(unittest.TestCase):
         
     
         
-    def test_getPackagesByStatus(self):
+    def test_getPackagesByStatus_returnsMatching(self):
         
         # Act
         result = self.package_service.get_packages_by_status(PackageStatus.IN_TRANSIT)
@@ -130,8 +131,22 @@ class GetPackageMethods_Should(unittest.TestCase):
         # matching packages
         self.assertEqual(result, [self.mock_package1, self.mock_package2])
         # non-matching
-        self.assertNotIn(self.mock_package3, result)
         
+    def test_getPackagesByStatus_notReturnsNonMatching(self):
+        
+        # Act
+        result = self.package_service.get_packages_by_status(PackageStatus.IN_TRANSIT)
+        
+        # Assert
+        self.assertNotIn(self.mock_package3, result)
+    
+    def test_getPackageByStatus_callsValuesOnce(self):
+
+        # Act
+        self.package_service.get_packages_by_status(PackageStatus.IN_TRANSIT)
+        
+        # Assert
+        self.mock_app_data.packages.values.assert_called_once()
         
 
 class MarkMethods_Should(unittest.TestCase):
