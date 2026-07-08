@@ -30,6 +30,32 @@ class RouteService:
     
     def get_all_routes(self):
         return list(self._app_data.routes.values())
+    
+    def get_routes_by_status(self, status: RouteStatus):
+        return [
+            route
+            for route in self._app_data.routes.values()
+            if route.status == status
+        ]
+        
+    def get_routes_in_progress(self):
+        return self.get_routes_by_status(RouteStatus.IN_PROGRESS)
+
+
+    def mark_route_as_completed(self, route: Route):
+        if route.status != RouteStatus.IN_PROGRESS:
+            raise ValueError("Only routes in progress can be completed!")
+        
+        route.status = RouteStatus.COMPLETED
+        
+    def mark_stop_as_completed(self,route :Route , stop_index: int):
+        stops = route.stops
+        if not 0 <= stop_index < len(stops):
+            raise ValueError(f"Route stop index [{stop_index}] out bound!")
+        if stops[stop_index].stop_status == RouteStatus.COMPLETED:
+            raise ValueError(f"Cannot mark stop as completed: Route stop [{stop_index}] already completed!")
+        stops[stop_index].stop_status = RouteStatus.COMPLETED
+        
 
     def find_routes_for_package(self, package: Package):
 
@@ -183,26 +209,8 @@ class RouteService:
                 package.mark_delivered()
             package.current_location = stop.location
         
-    def mark_route_as_completed(self, route: Route):
-        if route.status != RouteStatus.IN_PROGRESS:
-            raise ValueError("Only routes in progress can be completed!")
-        
-        route.status = RouteStatus.COMPLETED
-        
-    def mark_stop_as_completed(self,route :Route , stop_index: int):
-        stops = route.stops
-        if not 0 <= stop_index < len(stops):
-            raise ValueError(f"Route stop index [{stop_index}] out bound!")
-        if stops[stop_index].stop_status == RouteStatus.COMPLETED:
-            raise ValueError(f"Cannot mark stop as completed: Route stop [{stop_index}] already completed!")
-        stops[stop_index].stop_status = RouteStatus.COMPLETED
-        
-    def get_routes_by_status(self, status: RouteStatus):
-        return [
-            route
-            for route in self._app_data.routes.values()
-            if route.status == status
-        ]
+    
+    
     def get_eta_for_location(self, route_id: int, location: City):
         route = self.get_route(route_id)
         for stop in route.stops:
@@ -211,5 +219,4 @@ class RouteService:
         raise ValueError(f"Can't find eta for location, because location is not in the route stops!")
         
             
-    def get_routes_in_progress(self):
-        return self.get_routes_by_status(RouteStatus.IN_PROGRESS)
+
