@@ -1,5 +1,3 @@
-# tsutso si zapluva this/ working on it in the branch
-
 import unittest
 from unittest.mock import MagicMock, patch
 from services.package_service import PackageService
@@ -22,6 +20,7 @@ class CreatePackage_Should(unittest.TestCase):
         # mock package class inside package_service
         patcher = patch("services.package_service.Package")
         self.mock_package_cls = patcher.start()
+        # ran at end of setUp
         self.addCleanup(patcher.stop)
         
         self.mock_app_data.generate_package_id.return_value = 1
@@ -75,20 +74,24 @@ class GetPackageMethods_Should(unittest.TestCase):
                               self.mock_package2,
                               self.mock_package3]
         self.mock_app_data.packages.values.return_value = self.mock_packages
+        self.mock_app_data.find_package.return_value = "unrelated_to_the_test_data"
         
         
     def test_getPackage_findsPackage_withGivenId(self):
-        
-        # Arrange
-        self.mock_app_data.find_package.return_value = "unrelated_to_the_test_data"
 
         # Act
         result = self.package_service.get_package(1)
         
-        # Asserert
-        self.mock_app_data.find_package.assert_called_once_with(1)
+        # Assert
         self.assertEqual(result, self.mock_app_data.find_package.return_value)
+    
+    def test_getPackage_callsFindPackageOnce_withCorrectId(self):
         
+        # Act
+        result = self.package_service.get_package(1)
+        
+        # Assert
+        self.mock_app_data.find_package.assert_called_once_with(1)
         
     
     def test_getAllPackages_returnsCorrectPackages(self):
