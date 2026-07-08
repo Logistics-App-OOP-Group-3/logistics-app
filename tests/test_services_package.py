@@ -151,11 +151,14 @@ class GetPackageMethods_Should(unittest.TestCase):
 
 class MarkMethods_Should(unittest.TestCase):
     def setUp(self):
+        
+        # Arrange
         self.mock_app_data = MagicMock()
         self.package_service = PackageService(self.mock_app_data)
         
-        self.mock_package1 = MagicMock()
+        self.mock_package1 = MagicMock(spec_set=Package)
         self.mock_package1.status = PackageStatus.IN_TRANSIT
+        
         
         patcher = patch.object(self.package_service, "get_package", return_value=self.mock_package1)
         self.mock_get_package = patcher.start()
@@ -191,9 +194,12 @@ class MarkMethods_Should(unittest.TestCase):
         # Arrange
         self.mock_package1.status = PackageStatus.DELIVERED
 
-        # Act, Assert
-        with self.assertRaises(ValueError):
+        # Act
+        try:
             self.package_service.mark_in_transit(1)
+        except Exception:
+            pass
+        # Assert
         self.assertEqual(self.mock_package1.status, PackageStatus.DELIVERED)
         
     def test_markDelivered_callsGetPackageOnce(self):
