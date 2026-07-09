@@ -8,4 +8,6 @@ __pycache__/
 .idea/
 dist/
 build/
+.coverage
+htmlcov/
 *.egg-info/
