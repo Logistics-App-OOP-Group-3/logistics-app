@@ -11,7 +11,8 @@ class EngineShould(unittest.TestCase):
     @patch('builtins.input')
     @patch('builtins.print')
     @patch('os.system')
-    def test_engine_executes_valid_command(self, mock_print, mock_input):
+    #mock_os has to be there unused because of thge patch
+    def test_engine_executes_valid_command(self, mock_os, mock_print, mock_input):
         # Arrange
         mock_input.side_effect = ["ValidCommand", "exit"]
         
