@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 from commands.base.base_command import BaseCommand
 
-#creating a dummy command for testing purposes
+# Creating a dummy command for testing purposes
 class ConcreteCommand(BaseCommand):
     def execute(self) -> str:
         return "Executed"
