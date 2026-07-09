@@ -28,3 +28,8 @@ class CreatePackageCommand(BaseCommand):
         hub.add_single_package(package)
         
         return f"Package {package.package_id} created successfully and left at hub {hub.city.value}."
+    
+        #TODO: Call find_routes_for_package and display the info
+        #TODO: Call route_stops_info instead of __str__ to display available capacity per stop(refactor if needed)
+        #TODO:  for the employee to look up and try to assign the package which if it cant fit will raise error
+          
