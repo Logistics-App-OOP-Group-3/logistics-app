@@ -74,27 +74,27 @@ class RouteService:
         from starting to end point. Accounting for packages that are not
         currently picked up, but are already assigned.
         """
-        route = self.get_route(route_id)
-
         if package.route_id is not None:
             raise ValueError("Package already assigned!")
+
+        route = self.get_route(route_id)
+        
+        if route.vehicle_id is None:
+            raise ValueError("Route has no vehicle assigned!")
+        
+        vehicle = self._app_data.find_vehicle(route.vehicle_id)
 
         if not route.can_deliver_between(
             package.start_location,
             package.end_location
         ):
             raise ValueError("Route cannot deliver this package!")
-
+        
         pickup_stop = next(s for s in route.stops if s.location == package.start_location)
         dropoff_stop = next(s for s in route.stops if s.location == package.end_location)
         pickup_index = route.stops.index(pickup_stop)
         dropoff_index = route.stops.index(dropoff_stop)
-        
-        if route.vehicle_id is None:
-            raise ValueError("Route has no vehicle assigned!")
-        
 
-        vehicle = self._app_data.find_vehicle(route.vehicle_id)
         # check for truck capacity between package start & end location
         # accounting for already assigned packages that are not picked up
         for i in range(pickup_index, dropoff_index):  
