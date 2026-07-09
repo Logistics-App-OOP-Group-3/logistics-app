@@ -163,12 +163,13 @@ class RouteService:
         if route.status == RouteStatus.COMPLETED:
             raise ValueError("Cannot start a route that is completed!")
         
-        route.status = RouteStatus.IN_PROGRESS
         stops = route.stops
         for stop in stops:
             if stop.stop_status == RouteStatus.COMPLETED:
                 raise ValueError("Cannot mark route stop InProgress that is Completed!")
             stop.stop_status = RouteStatus.IN_PROGRESS
+        
+        route.status = RouteStatus.IN_PROGRESS
         
     # SIMULATION FUNC
     def complete_all_routes_next_stop(self):
