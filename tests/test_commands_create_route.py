@@ -2,19 +2,18 @@ import unittest
 from unittest.mock import MagicMock, patch
 from commands.create_route_command import CreateRouteCommand
 
-
-
-#TODO FIX THIS IT DOESNT WORK
 class CreateRouteCommandShould(unittest.TestCase):
     def setUp(self):
-        # Arrange
         self.mock_app_data = MagicMock()
         self.mock_route_service = MagicMock()
         self.mock_vehicle_service = MagicMock()
         self.params = ["SOF", "PLD", "VAR"]
 
-    def test_execute_raises_value_error_if_no_vehicle_available(self):
-        # Arrange
+    @patch('commands.create_route_command.vh')
+    def test_execute_raises_value_error_if_no_vehicle_available(self, mock_vh):
+        # Arrange: Setup mock helper
+        mock_vh.try_parse_city.side_effect = lambda x: x 
+        
         mock_route = MagicMock()
         mock_route.total_distance = 500
         self.mock_route_service.create_route.return_value = mock_route
@@ -28,8 +27,11 @@ class CreateRouteCommandShould(unittest.TestCase):
         
         self.assertIn("No vehicle available", str(cm.exception))
 
-    def test_execute_starts_route_when_vehicle_is_available(self):
-        # Arrange
+    @patch('commands.create_route_command.vh')
+    def test_execute_starts_route_when_vehicle_is_available(self, mock_vh):
+        # Arrange: Setup mock helper
+        mock_vh.try_parse_city.side_effect = lambda x: x 
+        
         mock_route = MagicMock()
         mock_route.total_distance = 500
         mock_route.__str__.return_value = "Route Info"
