@@ -6,6 +6,7 @@ from enums.city import City
 from models.route.route import Route
 from models.package import Package
 from models.vehicle import Vehicle
+from models.hub import Hub
 
 from models.route.route_stop import RouteStop
 from datetime import datetime
@@ -379,7 +380,6 @@ class AssignPackageToRoute_Should(unittest.TestCase):
         # should not proceed to mutate anything
         self.mock_route1.add_package.assert_not_called()
         
-        
     def test_raiseError_ifCapacityExceededAtIntermediateStop(self):
         
         # Arrange
@@ -432,3 +432,262 @@ class AssignPackagesFromHubs_Should(unittest.TestCase):
         self.mock_app_data = MagicMock()
         self.route_service = RouteService(self.mock_app_data)
         
+
+class AssignTruckToRoute_Should(unittest.TestCase):
+    
+    def setUp(self):
+        
+        # Arrange
+        self.mock_app_data = MagicMock()
+        self.route_service = RouteService(self.mock_app_data)
+        
+        self.mock_route = MagicMock(spec_set=Route, route_id = 1, vehicle_id = None)
+        self.mock_vehicle = MagicMock(spec_set=Vehicle,vehicle_id = 1001, route_id = None)
+        
+    def test_changesValues_whenValidData(self):
+        
+        # Act
+        self.route_service.assign_truck_to_route(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+        self.assertEqual(self.mock_route.vehicle_id, 1001)
+        self.assertEqual(self.mock_vehicle.route_id, 1)
+
+        
+    def test_raiseError_WhenRouteAlreadyHasTruck(self):
+        
+        # Arrange
+        self.mock_route.vehicle_id = 1
+        
+        # Act, Assert
+        with self.assertRaises(ValueError):
+            self.route_service.assign_truck_to_route(self.mock_route, self.mock_vehicle)
+        
+        # route.veihcle_id not touched
+        self.assertEqual(self.mock_route.vehicle_id, 1)
+        
+    def test_raiseError_WhenVehicleAlreadyHasRoute(self):
+        
+        # Arrange
+        self.mock_vehicle.route_id = 2
+        
+        # Act, Assert
+        with self.assertRaises(ValueError):
+            self.route_service.assign_truck_to_route(self.mock_route, self.mock_vehicle)
+        
+        # vehicle.route_id not touched
+        self.assertEqual(self.mock_vehicle.route_id, 2)
+        
+class StartRoute_Should(unittest.TestCase):
+    
+    def _check_stop_status(self, stops, status: RouteStatus):
+        for stop in stops:
+            self.assertEqual(stop.stop_status, status)
+    
+    def setUp(self):
+        
+        # Arrange
+        
+        self.mock_stop1 = MagicMock(spec_set=RouteStop, location = City.SYD, stop_status = RouteStatus.PLANNED)
+        self.mock_stop2 = MagicMock(spec_set=RouteStop, location = City.PER, stop_status = RouteStatus.PLANNED)
+        
+        # self.mock_stops = [self.mock_stop1, self.mock_stop2]
+        
+        self.mock_app_data = MagicMock()
+        self.route_service = RouteService(self.mock_app_data)
+        
+        self.mock_route = MagicMock(
+            spec_set=Route,
+            route_id = 1,
+            vehicle_id = 1,
+            status = RouteStatus.PLANNED,
+            stops = [self.mock_stop1, self.mock_stop2]
+            )
+    
+    def test_changesRouteStatus_whenValidData(self):
+        
+        # Act
+        self.route_service.start_route(self.mock_route)
+        
+        # Assert
+        self.assertEqual(self.mock_route.status, RouteStatus.IN_PROGRESS)
+        
+    def test_changesStopsStatus_whenValidData(self):
+        
+        # Act
+        self.route_service.start_route(self.mock_route)
+        
+        # Assert
+        self._check_stop_status(self.mock_route.stops, RouteStatus.IN_PROGRESS)        
+    
+    def test_raiseError_whenVeihcleIdIsNone(self):
+        
+        # Arrange
+        self.mock_route.vehicle_id = None
+        
+        # Act, Assert
+        with self.assertRaises(ValueError):
+            self.route_service.start_route(self.mock_route)
+            
+        #status not changed
+        self.assertEqual(self.mock_route.status, RouteStatus.PLANNED)
+        self._check_stop_status(self.mock_route.stops, RouteStatus.PLANNED)
+        
+    def test_raiseError_whenRouteStatusIsCompleted(self):
+        
+        # Arrange
+        self.mock_route.status = RouteStatus.COMPLETED
+        
+        # Act, Assert
+        with self.assertRaises(ValueError):
+            self.route_service.start_route(self.mock_route)
+            
+        #status not changed
+        self.assertEqual(self.mock_route.status, RouteStatus.COMPLETED)
+        self._check_stop_status(self.mock_route.stops, RouteStatus.PLANNED)
+        
+    def test_raiseError_whenStopStatusIsCompleted(self):
+        
+        # Arrange
+        self.mock_stop1.stop_status = RouteStatus.COMPLETED
+        
+        # Act, Assert
+        with self.assertRaises(ValueError):
+            self.route_service.start_route(self.mock_route)
+
+        #status not changed
+        self.assertEqual(self.mock_route.status, RouteStatus.PLANNED)
+        self.assertEqual(self.mock_stop1.stop_status, RouteStatus.COMPLETED)
+        self.assertEqual(self.mock_stop2.stop_status, RouteStatus.PLANNED)
+        
+class CompleteAllRoutesNextStop_Should(unittest.TestCase):
+    
+    def setUp(self):
+        
+        # Arrange
+        self.mock_app_data = MagicMock()
+        self.route_service = RouteService(self.mock_app_data)
+        
+class LoadRoutePackagesFromStop_Should(unittest.TestCase):
+    
+    def setUp(self):
+        #TODO: continue here
+        # Arrange
+        self.mock_app_data = MagicMock()
+        self.route_service = RouteService(self.mock_app_data)
+
+class UnloadRoutePackagesToStop_Should(unittest.TestCase):
+    
+    def setUp(self):
+        
+        # Arrange
+        self.mock_hub = MagicMock(spec_set=Hub, city = City.SYD)
+        
+        self.mock_package1 = MagicMock(spec_set=Package, current_location = City.PER , end_location = City.SYD)
+        self.mock_package2 = MagicMock(spec_set=Package, current_location = City.PER, end_location = City.ADL)
+
+        
+        self.mock_stop1 = MagicMock(spec_set=RouteStop, location = City.PER)
+        self.mock_stop2 = MagicMock(spec_set=RouteStop, location = City.SYD)
+        self.mock_route1 = MagicMock(
+            spec_set=Route,
+            stops = [self.mock_stop1, self.mock_stop2],
+            packages_ids = {1,2}
+            )
+        self.mock_app_data = MagicMock()
+        self.mock_app_data.find_hub.return_value = self.mock_hub
+        self.mock_app_data.find_package.side_effect = [self.mock_package1, self.mock_package2]
+        self.route_service = RouteService(self.mock_app_data)
+        
+    def test_callsFindHubOnce_withCorrectStopIndexLocation(self):
+        
+        # Act
+        self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_app_data.find_hub.assert_called_once_with(City.SYD)
+        
+    def test_callsFindPackage_withCorrectPackageIds(self):
+        
+        # Act
+        self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_app_data.find_package.assert_has_calls([
+            unittest.mock.call(1),
+            unittest.mock.call(2),
+            ])
+    
+    def test_callsAddSinglePackage_onlyWhenMatchingLocations(self):
+        
+        # Act
+        self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_hub.add_single_package.assert_called_once_with(self.mock_package1, delivered=True)
+    
+    def test_callsMarkDelivered_whenMatchingLocations(self):
+        
+        # Act
+        self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_package1.mark_delivered.assert_called_once()
+    
+    def test_notCallsMarkDelivered_whenNotMatchingLocations(self):
+        
+        # Act
+        self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_package2.mark_delivered.assert_not_called()
+        
+    def test_changesPackageCurrentLocation(self):
+        
+        # Act
+        self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.assertEqual(self.mock_package1.current_location, self.mock_stop2.location)
+        self.assertEqual(self.mock_package2.current_location, self.mock_stop2.location)
+
+class GetEtaForLocation_Should(unittest.TestCase):
+    
+    def setUp(self):
+        
+        # Arrange
+        # no spec because arrivaltime is object attribute not class
+        self.mock_stop1 = MagicMock(location = City.SYD, arrival_time = datetime.min)
+        self.mock_stop2 = MagicMock(location = City.PER, arrival_time = datetime.min)
+        
+        self.mock_route1 = MagicMock(
+            spec_set=Route,
+            stops = [self.mock_stop1, self.mock_stop2]
+            
+            )
+
+        self.mock_app_data = MagicMock()
+        self.route_service = RouteService(self.mock_app_data)
+        self.route_service.get_route = MagicMock(return_value=self.mock_route1)
+        
+    def test_callsGetRouteOnce(self):
+            
+        # Act
+        self.route_service.get_eta_for_location(1, City.SYD)
+
+        # Assert
+        self.route_service.get_route.assert_called_once_with(1)
+        
+    def test_returnCorrectValue_whenValidData(self):
+        
+        # Act
+        result = self.route_service.get_eta_for_location(1, City.SYD)
+        
+        # Assert
+        self.assertEqual(result, self.mock_stop1.arrival_time)
+        
+    def test_raiseError_whenLocationNotInRouteStops(self):
+        
+        # Act, Assert
+        with self.assertRaises(ValueError):
+            self.route_service.get_eta_for_location(1, City.ADL)
