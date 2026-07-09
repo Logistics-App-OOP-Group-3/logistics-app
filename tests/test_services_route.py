@@ -426,7 +426,7 @@ class AssignPackageToRoute_Should(unittest.TestCase):
 
 
 class AssignPackagesFromHubs_Should(unittest.TestCase):
-    
+    #TODO
     def setUp(self):
         
         self.mock_app_data = MagicMock()
@@ -561,7 +561,7 @@ class StartRoute_Should(unittest.TestCase):
         self.assertEqual(self.mock_stop2.stop_status, RouteStatus.PLANNED)
         
 class CompleteAllRoutesNextStop_Should(unittest.TestCase):
-    
+    #TODO
     def setUp(self):
         
         # Arrange
@@ -571,24 +571,85 @@ class CompleteAllRoutesNextStop_Should(unittest.TestCase):
 class LoadRoutePackagesFromStop_Should(unittest.TestCase):
     
     def setUp(self):
-        #TODO: continue here
+
         # Arrange
+        self.mock_package1 = MagicMock(spec_set=Package, current_location = City.PER , end_location = City.SYD)
+        self.mock_package2 = MagicMock(spec_set=Package, current_location = City.PER, end_location = City.ADL)
+        
+        self.mock_hub = MagicMock(
+            spec_set=Hub,
+            city = City.SYD,
+            packages_ids = {1,2,3}
+            )
+        
+        self.mock_stop1 = MagicMock(spec_set=RouteStop, location = City.PER)
+        self.mock_stop2 = MagicMock(spec_set=RouteStop, location = City.SYD)
+        
+        self.mock_route1 = MagicMock(
+            spec_set=Route,
+            stops = [self.mock_stop1, self.mock_stop2],
+            packages_ids = {1,2,4}
+            )
+        
         self.mock_app_data = MagicMock()
+        self.mock_app_data.find_hub.return_value = self.mock_hub
+        self.mock_app_data.find_package.side_effect = [self.mock_package1, self.mock_package2]
         self.route_service = RouteService(self.mock_app_data)
+        
+    def test_callsFindHubOnce_withCorrectStopLocation(self):
+        
+        # Act
+        self.route_service.load_route_packages_from_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_app_data.find_hub.assert_called_once_with(City.SYD)
+        
+    def test_callsHubsRemoveSinglePackage_withCorrectPackageIds(self):
+        
+        # Act
+        self.route_service.load_route_packages_from_stop(self.mock_route1, 1)
+        
+        # Assert
+        self.mock_hub.remove_single_package.assert_has_calls([
+            unittest.mock.call(1),
+            unittest.mock.call(2)
+        ])
+        
+    def test_callsFindPackage_withCorrectPackageIds(self):
+
+        # Act
+        self.route_service.load_route_packages_from_stop(self.mock_route1, 1) #id[1] => City.SYD
+        
+        # Assert
+        self.mock_app_data.find_package.assert_has_calls([
+            unittest.mock.call(1),
+            unittest.mock.call(2),
+            ])
+        
+    def test_callsStartDelivery_onValidPackages(self):
+        
+        # Act
+        self.route_service.load_route_packages_from_stop(self.mock_route1, 1) #id[1] => City.SYD
+    
+        # Assert
+        self.mock_package1.start_delivery.assert_called_once()
+        self.mock_package2.start_delivery.assert_called_once()
+
+    
 
 class UnloadRoutePackagesToStop_Should(unittest.TestCase):
     
     def setUp(self):
         
         # Arrange
-        self.mock_hub = MagicMock(spec_set=Hub, city = City.SYD)
-        
         self.mock_package1 = MagicMock(spec_set=Package, current_location = City.PER , end_location = City.SYD)
         self.mock_package2 = MagicMock(spec_set=Package, current_location = City.PER, end_location = City.ADL)
 
-        
+        self.mock_hub = MagicMock(spec_set=Hub, city = City.SYD)
+    
         self.mock_stop1 = MagicMock(spec_set=RouteStop, location = City.PER)
         self.mock_stop2 = MagicMock(spec_set=RouteStop, location = City.SYD)
+
         self.mock_route1 = MagicMock(
             spec_set=Route,
             stops = [self.mock_stop1, self.mock_stop2],
@@ -599,7 +660,7 @@ class UnloadRoutePackagesToStop_Should(unittest.TestCase):
         self.mock_app_data.find_package.side_effect = [self.mock_package1, self.mock_package2]
         self.route_service = RouteService(self.mock_app_data)
         
-    def test_callsFindHubOnce_withCorrectStopIndexLocation(self):
+    def test_callsFindHubOnce_withCorrectStopLocation(self):
         
         # Act
         self.route_service.unload_route_packages_to_stop(self.mock_route1, 1)
