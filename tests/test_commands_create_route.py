@@ -2,6 +2,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 from commands.create_route_command import CreateRouteCommand
 
+
+
+#TODO FIX THIS IT DOESNT WORK
 class CreateRouteCommandShould(unittest.TestCase):
     def setUp(self):
         # Arrange
