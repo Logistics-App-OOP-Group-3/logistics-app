@@ -36,7 +36,7 @@ class SystemLoad_Should(unittest.TestCase):
         
         #Add packages to the stops
         for i in range(50):
-            stops[i].add_pick_up_weigth(5.0)
+            stops[i].add_pick_up_weight(5.0)
             
         #Ensure that calculating capacity for a long route doesnt crash
         capacities = route.calculate_stops_capacity()
