@@ -18,8 +18,8 @@ class RouteStop:
         self.arrival_time: datetime | None = None
         self.departure_time: datetime | None = None
         
-        self._pick_up_weigth = 0
-        self._drop_off_weigth = 0
+        self._pick_up_weight = 0
+        self._drop_off_weight = 0
         
         self._stop_status = RouteStatus.PLANNED
     
@@ -28,11 +28,11 @@ class RouteStop:
         return self._location
     
     @property
-    def pick_up_weigth(self):
-        return self._pick_up_weigth
+    def pick_up_weight(self):
+        return self._pick_up_weight
     @property
-    def drop_off_weigth(self):
-        return self._drop_off_weigth
+    def drop_off_weight(self):
+        return self._drop_off_weight
     @property
     def stop_status(self):
         return self._stop_status
@@ -40,10 +40,10 @@ class RouteStop:
     def stop_status(self, value: RouteStatus):
         self._stop_status = value
     
-    def add_pick_up_weigth(self, value: int):
-        self._pick_up_weigth += value
-    def add_drop_off_weigth(self, value: int):
-        self._drop_off_weigth += value
+    def add_pick_up_weight(self, value: int):
+        self._pick_up_weight += value
+    def add_drop_off_weight(self, value: int):
+        self._drop_off_weight += value
 
     def __str__(self):
         return (

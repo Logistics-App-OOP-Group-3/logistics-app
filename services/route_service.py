@@ -105,8 +105,8 @@ class RouteService:
 
         route.add_package(package.package_id)
         package.assign_to_route(route.route_id)
-        pickup_stop.add_pick_up_weigth(package.weight)
-        dropoff_stop.add_drop_off_weigth(package.weight)
+        pickup_stop.add_pick_up_weight(package.weight)
+        dropoff_stop.add_drop_off_weight(package.weight)
 
 
 
@@ -140,8 +140,8 @@ class RouteService:
 
                 route.add_package(package.package_id)
                 package.assign_to_route(route.route_id)
-                pickup_stop.add_pick_up_weigth(package.weight)
-                dropoff_stop.add_drop_off_weigth(package.weight)
+                pickup_stop.add_pick_up_weight(package.weight)
+                dropoff_stop.add_drop_off_weight(package.weight)
 
 
 
