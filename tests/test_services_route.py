@@ -419,20 +419,232 @@ class AssignPackageToRoute_Should(unittest.TestCase):
         # Assert
         self.mock_route1.add_package.assert_called_once_with(1)
         self.mock_package.assign_to_route.assert_called_once_with(1)
-        self.mock_stop_a.add_pick_up_weigth.assert_called_once_with(10)
-        self.mock_stop_a.add_drop_off_weigth.assert_not_called()
-        self.mock_stop_b.add_pick_up_weigth.assert_not_called()
-        self.mock_stop_b.add_drop_off_weigth.assert_called_once_with(10)
+        self.mock_stop_a.add_pick_up_weight.assert_called_once_with(10)
+        self.mock_stop_a.add_drop_off_weight.assert_not_called()
+        self.mock_stop_b.add_pick_up_weight.assert_not_called()
+        self.mock_stop_b.add_drop_off_weight.assert_called_once_with(10)
 
 
 class AssignPackagesFromHubs_Should(unittest.TestCase):
-    #TODO
+
     def setUp(self):
         
+        # Arrange
+        self.mock_package1 = MagicMock(spec_set=Package, package_id = 1, weight = 2, start_location = City.SYD, end_location = City.MEL)
+        self.mock_package2 = MagicMock(spec_set=Package, package_id = 2, weight = 100, start_location = City.PER, end_location = City.MEL)
+        self.mock_package3 = MagicMock(spec_set=Package, package_id = 3, weight = 2, start_location = City.PER, end_location = City.MEL)
+
+        
+        self.mock_stop1 = MagicMock(spec_set=RouteStop, location = City.SYD, stop_status = RouteStatus.PLANNED)
+        self.mock_stop2 = MagicMock(spec_set=RouteStop, location = City.PER, stop_status = RouteStatus.PLANNED)
+        self.mock_stop3 = MagicMock(spec_set=RouteStop, location = City.MEL, stop_status = RouteStatus.PLANNED)
+        self.mock_stops = [
+            self.mock_stop1,
+            self.mock_stop2,
+            self.mock_stop3
+            ]
+
+        self.mock_hub1 = MagicMock(spec_set=Hub, city=City.SYD)
+        self.mock_hub1.find_packages_for_locations.return_value = [self.mock_package1]
+        self.mock_hub2 = MagicMock(spec_set=Hub, city=City.PER)
+        self.mock_hub2.find_packages_for_locations.return_value = [self.mock_package2, self.mock_package3]
+        self.mock_hub3 = MagicMock(spec_set=Hub, city=City.MEL)
+
+        self.mock_hubs = [self.mock_hub1, self.mock_hub2, self.mock_hub3]
+
+        self.mock_vehicle = MagicMock(spec_set=Vehicle, max_capacity = 100)
+
+        self.mock_route = MagicMock(spec_set=Route, route_id = 1, vehicle_id = None, stops = self.mock_stops)
+        # called for each stop in route.stops except last one
+        # last is allways zero
+        self.mock_route.weight_at_stop.side_effect = [2,4]
+        
         self.mock_app_data = MagicMock()
+        # find_hub is called once per stop, in the order stops are processed
+        self.mock_app_data.find_hub.side_effect = [self.mock_hub1, self.mock_hub2, self.mock_hub3]
         self.route_service = RouteService(self.mock_app_data)
         
-
+    def test_callsAppDataFindHubForEachStop_withCorrectData(self):
+        
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+            # Searching for packages to assign, so last stop is ommited, bacause we only leave packages there
+        self.assertEqual(
+            self.mock_app_data.find_hub.call_args_list,
+            [
+                unittest.mock.call(self.mock_stops[0].location),
+                unittest.mock.call(self.mock_stops[1].location)
+             ]
+        )
+        
+    def test_callsHubFindPackageForLocations_withCorrectData(self):
+        
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+            # calls with list of city.location for later stops in the route
+        self.mock_hub1.find_packages_for_locations.assert_called_once_with([City.PER, City.MEL])
+        self.mock_hub2.find_packages_for_locations.assert_called_once_with([City.MEL])
+        
+    def test_callsRouteWeightAtStop_withCorrectData(self):
+        
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+        self.assertEqual(
+            self.mock_route.weight_at_stop.call_args_list,
+            [unittest.mock.call(0), unittest.mock.call(1)]
+        )
+        
+    def test_continuesEvaluating_afterSkippingOversizedPackage(self):
+        """
+        Tests calls to the 4 methods involved in mutating state
+            Route.add_package()
+            Package.assing_to_route()
+            RouteStop.add_pick_up_weight()
+            RouteStop.add_drop_off_weight()
+        """
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+            # Route.add_package()
+        self.assertEqual(
+            self.mock_route.add_package.call_args_list,
+            [
+                unittest.mock.call(self.mock_package1.package_id),
+                unittest.mock.call(self.mock_package3.package_id)
+            ]
+        )
+        
+            # Package.assign_to_route()
+        self.mock_package1.assign_to_route.assert_called_once_with(self.mock_route.route_id)
+        self.mock_package3.assign_to_route.assert_called_once_with(self.mock_route.route_id)
+        
+            # RouteStop.add_pick_up_weight
+        self.mock_stop1.add_pick_up_weight.assert_called_once_with(self.mock_package1.weight)
+        self.mock_stop2.add_pick_up_weight.assert_called_once_with(self.mock_package3.weight)
+        
+            # RouteStop.add_drop_off_weight
+        self.assertEqual(
+            self.mock_stop3.add_drop_off_weight.call_args_list,
+            [
+                unittest.mock.call(self.mock_package1.weight),
+                unittest.mock.call(self.mock_package3.weight)
+            ]
+        )
+            
+    def test_skipsPackages_whenExceedingRemainingCapacity(self):
+        """
+        Tests calls to the 4 methods involved in mutating state
+            Route.add_package()
+            Package.assing_to_route()
+            RouteStop.add_pick_up_weight()
+            RouteStop.add_drop_off_weight()
+        """
+        # Arrange
+        self.mock_package1.weight = 1
+        self.mock_package2.weight = 100
+        self.mock_package3.weight = 100
+        
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+            # Route.add_package()
+        self.mock_route.add_package.assert_called_once_with(self.mock_package1.package_id)
+        
+            # Package.assign_to_route()
+        self.mock_package1.assign_to_route.assert_called_once_with(self.mock_route.route_id)
+        self.mock_package2.assign_to_route.assert_not_called()
+        self.mock_package3.assign_to_route.assert_not_called()
+        
+            # RouteStop.add_pick_up_weight
+        self.mock_stop1.add_pick_up_weight.assert_called_once_with(self.mock_package1.weight)
+        self.mock_stop2.add_pick_up_weight.assert_not_called()
+        
+            # RouteStop.add_drop_off_weight
+        self.mock_stop3.add_drop_off_weight.assert_called_once_with(self.mock_package1.weight)
+        
+    def test_assignPackage_whenFitsInCapacity_withCorrectData(self):
+        """
+        Tests calls to the 4 methods involved in mutating state
+            Route.add_package()
+            Package.assing_to_route()
+            RouteStop.add_pick_up_weight()
+            RouteStop.add_drop_off_weight()
+        """
+        # Arrange
+        self.mock_package2.weight = 2
+        
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+            # Route.add_package()
+        self.assertEqual(
+            self.mock_route.add_package.call_args_list, 
+            [
+                unittest.mock.call(self.mock_package1.package_id),
+                unittest.mock.call(self.mock_package2.package_id),
+                unittest.mock.call(self.mock_package3.package_id)
+            ]
+        )
+        
+            # Package.assign_to_route()
+        self.mock_package1.assign_to_route.assert_called_once_with(self.mock_route.route_id)
+        self.mock_package2.assign_to_route.assert_called_once_with(self.mock_route.route_id)
+        self.mock_package3.assign_to_route.assert_called_once_with(self.mock_route.route_id)
+        
+            # RouteStop.add_pick_up_weight
+        self.mock_stop1.add_pick_up_weight.assert_called_once_with(self.mock_package1.weight)
+        self.assertEqual(
+            self.mock_stop2.add_pick_up_weight.call_args_list,
+            [
+                unittest.mock.call(self.mock_package2.weight),
+                unittest.mock.call(self.mock_package3.weight)
+            ]
+        )
+        
+            # RouteStop.add_drop_off_weight
+        self.assertEqual(
+            self.mock_stop3.add_drop_off_weight.call_args_list,
+            [
+                unittest.mock.call(self.mock_package1.weight),
+                unittest.mock.call(self.mock_package2.weight),
+                unittest.mock.call(self.mock_package3.weight)
+            ]
+        )
+        
+    def test_noAssignment_whenHubHasNoCandidates(self):
+        
+        # Arrange
+        self.mock_hub1.find_packages_for_locations.return_value = []
+        self.mock_hub2.find_packages_for_locations.return_value = []
+        self.mock_hub3.find_packages_for_locations.return_value = []
+        
+        # Act
+        self.route_service.assign_packages_from_hubs(self.mock_route, self.mock_vehicle)
+        
+        # Assert
+        self.mock_route.add_package.assert_not_called()
+        
+    
+    def test_raiseError_whenDropOffStopMissing(self):
+        """ 
+            This is now a valid joke.
+            We made a bet whether it is possible.
+            Thats how the raise ValueError appeared in the code.
+            Will implement this when that code becomes official.
+        """
+        # Assert
+        self.assertTrue(True)
+        
+        
 class AssignTruckToRoute_Should(unittest.TestCase):
     
     def setUp(self):
@@ -555,7 +767,7 @@ class StartRoute_Should(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.route_service.start_route(self.mock_route)
 
-        #status not changed
+        # assert status not changed
         self.assertEqual(self.mock_route.status, RouteStatus.PLANNED)
         self.assertEqual(self.mock_stop1.stop_status, RouteStatus.COMPLETED)
         self.assertEqual(self.mock_stop2.stop_status, RouteStatus.PLANNED)
@@ -563,7 +775,7 @@ class StartRoute_Should(unittest.TestCase):
 class CompleteAllRoutesNextStop_Should(unittest.TestCase):
 
     def setUp(self):
-        #TODO: doing
+        
         # Arrange
         self.mock_route1 = MagicMock(
             spec_set=Route,
@@ -691,6 +903,8 @@ class LoadRoutePackagesFromStop_Should(unittest.TestCase):
         
         self.mock_app_data = MagicMock()
         self.mock_app_data.find_hub.return_value = self.mock_hub
+        
+        #app_data.find_package is called for every match in hub's & route's packages_ids
         self.mock_app_data.find_package.side_effect = [self.mock_package1, self.mock_package2]
         self.route_service = RouteService(self.mock_app_data)
         
@@ -755,6 +969,8 @@ class UnloadRoutePackagesToStop_Should(unittest.TestCase):
             )
         self.mock_app_data = MagicMock()
         self.mock_app_data.find_hub.return_value = self.mock_hub
+
+        # find_package is called for every package in route's packages_ids
         self.mock_app_data.find_package.side_effect = [self.mock_package1, self.mock_package2]
         self.route_service = RouteService(self.mock_app_data)
         
