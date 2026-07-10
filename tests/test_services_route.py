@@ -561,12 +561,110 @@ class StartRoute_Should(unittest.TestCase):
         self.assertEqual(self.mock_stop2.stop_status, RouteStatus.PLANNED)
         
 class CompleteAllRoutesNextStop_Should(unittest.TestCase):
-    #TODO
+
     def setUp(self):
-        
+        #TODO: doing
         # Arrange
+        self.mock_route1 = MagicMock(
+            spec_set=Route,
+            route_id = 1,
+            status = RouteStatus.IN_PROGRESS,
+            stops = [MagicMock(), MagicMock(), MagicMock()])
+        
+        self.mock_route2 = MagicMock(
+            spec_set=Route,
+            route_id = 2,
+            status = RouteStatus.IN_PROGRESS,
+            stops = [MagicMock(), MagicMock()]
+            )
+        
+        self.mock_route1.get_index_of_next_incompleted_stop = MagicMock(return_value = 2)
+        self.mock_route2.get_index_of_next_incompleted_stop = MagicMock(return_value = 0)
+
+        self.mock_routes = [self.mock_route1, self.mock_route2]
+
         self.mock_app_data = MagicMock()
         self.route_service = RouteService(self.mock_app_data)
+        self.route_service.get_routes_by_status = MagicMock(return_value = self.mock_routes)
+        
+        self.mock_load_packages_method = patch.object(RouteService, "load_route_packages_from_stop").start()
+        self.mock_unload_packages_method = patch.object(RouteService, "unload_route_packages_to_stop").start()
+        self.mock_mark_route_method = patch.object(RouteService, "mark_route_as_completed").start()
+        self.mock_mark_stop_method = patch.object(RouteService, "mark_stop_as_completed").start()
+        
+        self.addCleanup(patch.stopall)
+        
+    def test_callsOnce_getRoutesByStatus_withCorrectData(self):
+
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+        
+        # Assert
+        self.route_service.get_routes_by_status.assert_called_once_with(RouteStatus.IN_PROGRESS)
+        
+    def test_callsForEachRoute_getIndexOfNextIncompletedStop(self):  
+        
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+        
+        # Assert
+        self.mock_route1.get_index_of_next_incompleted_stop.assert_called_once()
+        self.mock_route2.get_index_of_next_incompleted_stop.assert_called_once()
+        
+    def test_callsOnlyLoadPackages_whenStopIndexIsZero_withCorrectData(self):
+        
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+        
+        # Assert
+        self.assertEqual(
+            self.mock_load_packages_method.call_args_list,
+            [unittest.mock.call(self.mock_route2, 0)]
+        )
+        
+    def test_callsOnlyUnLoadPackages_whenStopIndexIsLast_withCorrectData(self):
+        
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+
+        # Assert
+        self.assertEqual(
+            self.mock_unload_packages_method.call_args_list,
+            [unittest.mock.call(self.mock_route1, 2)]
+        )
+    
+    def test_callsLoadAndUnload_whenStopIndexIndexNotFirstNotLast_withCorrectData(self):
+
+        # Arrange
+        self.mock_route1.get_index_of_next_incompleted_stop = MagicMock(return_value = 1)
+        self.route_service.get_routes_by_status = MagicMock(return_value = [self.mock_route1])
+        
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+        
+        # Assert
+        self.mock_load_packages_method.assert_called_once_with(self.mock_route1, 1)
+        self.mock_unload_packages_method.assert_called_once_with(self.mock_route1, 1)
+        
+    def test_callsMarkStopAsCompleted_withCorrectData(self):
+        
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+        
+        # Arrange
+        self.assertEqual(
+            self.mock_mark_stop_method.call_args_list,
+            [unittest.mock.call(self.mock_route1,2), unittest.mock.call(self.mock_route2,0)]
+        )
+        
+    def test_callsMarkRouteAsCompleted_whenStopIndexIsLast_withCorrectData(self):
+        
+        # Act
+        self.route_service.complete_all_routes_next_stop()
+        
+        # Arrange
+        self.mock_mark_route_method.assert_called_once_with(self.mock_route1)
+
         
 class LoadRoutePackagesFromStop_Should(unittest.TestCase):
     
