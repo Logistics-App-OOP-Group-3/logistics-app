@@ -40,9 +40,10 @@ class CreatePackageCommand(BaseCommand):
         else:
             result.append("\nAvailable routes for assignment:")
             for route in available_routes:
-                result.append(f"--- Route #{route.id} ---")
+                result.append(f"--- Route #{route.route_id} ---")
                 # Използваме route_stops_info() вместо __str__, за да видим капацитета по спирки
-                result.append(route.route_stops_info())
+                vehicle = self.app_data.find_vehicle(route.vehicle_id)
+                result.append(route.route_stops_info(vehicle.max_capacity))
                 result.append("-" * 25)
         
         return "\n".join(result)

@@ -163,7 +163,7 @@ class Route:
         if self.status != RouteStatus.COMPLETED:
             location = self.current_location
             if location is None:
-                result.append(f"Location: On the way to the first location")
+                result.append(f"Location: On the way to: {self.start_location}")
             else:
                 result.append(f"Location: {location}")
                
