@@ -20,7 +20,8 @@ class RouteInfoCommand(BaseCommand):
         route = self._route_service.get_route(route_id)
         
         result = [str(route)]
-
+        vehicle = self.app_data.find_vehicle(route.vehicle_id)
+        result.append(f"{"":<56}Max capaci: {vehicle.max_capacity} kg")
         if not route.packages_ids:
             result.append('Packages: No packages have been assigned to this route.')
         else:
