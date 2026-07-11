@@ -19,13 +19,15 @@ class CreateRouteCommand(BaseCommand):
         DISCARD route if no vehicle to complete it AND raise error
         ADD packages from hubs (FIFO) calculating how much is droped off and picked up at each stop
         """
+        
+        date_time = vh.try_parse_date_time(self.params[0])
         stops = [
             RouteStop(vh.try_parse_city(location))
             for location 
-            in self.params
+            in self.params[1:]
             ]
         
-        route = self._route_service.create_route(stops)
+        route = self._route_service.create_route(stops, date_time)
         vehicle = self._vehicle_service.find_available_vehicle_for_distance(route.total_distance)
         
         if not vehicle:
