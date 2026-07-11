@@ -9,8 +9,7 @@ class Initializer_Should(unittest.TestCase):
     def test_nothingBreaks(self):
         mock_app_data = MagicMock()
         VehicleService(mock_app_data)
-        
-    
+           
 class GetMethods_Shoud(unittest.TestCase):
     def setUp(self):
     
@@ -46,7 +45,6 @@ class GetMethods_Shoud(unittest.TestCase):
         
         # Assert
         self.assertIsInstance(result, list)
-
 
 class FindAvailableVehicleForDistance_Should(unittest.TestCase):
     def setUp(self):
@@ -86,8 +84,7 @@ class FindAvailableVehicleForDistance_Should(unittest.TestCase):
         self.mock_vehicles[1].route_id = 2
         self.mock_vehicles[2].route_id = 3
         self.mock_vehicles[3].route_id = 4
-        
-        
+          
         # Act
         result = self.vehicle_service.find_available_vehicle_for_distance(100)
         

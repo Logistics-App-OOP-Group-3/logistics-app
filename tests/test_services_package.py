@@ -9,7 +9,6 @@ class Initializer_Should(unittest.TestCase):
         mock_app_data = MagicMock()
         PackageService(mock_app_data)
         
-
 class CreatePackage_Should(unittest.TestCase):
     
     def setUp(self):
@@ -94,7 +93,6 @@ class GetPackageMethods_Should(unittest.TestCase):
         # Assert
         self.mock_app_data.find_package.assert_called_once_with(1)
         
-    
     def test_getAllPackages_returnsCorrectPackages(self):
         
         # Act
@@ -119,9 +117,7 @@ class GetPackageMethods_Should(unittest.TestCase):
         
         # Assert
         self.mock_app_data.packages.values.assert_called_once()
-        
-    
-        
+         
     def test_getPackagesByStatus_returnsMatching(self):
         
         # Act
@@ -148,7 +144,6 @@ class GetPackageMethods_Should(unittest.TestCase):
         # Assert
         self.mock_app_data.packages.values.assert_called_once()
         
-
 class MarkMethods_Should(unittest.TestCase):
     def setUp(self):
         
@@ -158,7 +153,6 @@ class MarkMethods_Should(unittest.TestCase):
         
         self.mock_package1 = MagicMock(spec_set=Package)
         self.mock_package1.status = PackageStatus.IN_TRANSIT
-        
         
         patcher = patch.object(self.package_service, "get_package", return_value=self.mock_package1)
         self.mock_get_package = patcher.start()
@@ -171,7 +165,6 @@ class MarkMethods_Should(unittest.TestCase):
         
         # Assert
         self.mock_get_package.assert_called_once_with(1)
-
 
     def test_markInTransit_changesStatus_whenValidData(self):
         

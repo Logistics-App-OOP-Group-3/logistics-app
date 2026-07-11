@@ -228,8 +228,7 @@ class info_not_assigned_packages_by_end_location_Should(unittest.TestCase):
         
         # Assert
         self.assertLess(syd_index, adl_idx)
-        
-        
+            
 class FindPackagesForLocations_Should(unittest.TestCase):
     def setUp(self):
         

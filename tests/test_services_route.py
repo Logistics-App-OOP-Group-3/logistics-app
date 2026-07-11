@@ -158,7 +158,6 @@ class GetRouteMethods_Should(unittest.TestCase):
             # Assert
             self.mock_app_data.routes.values.assert_called_once()
             
-            
 class MarkMethods_Should(unittest.TestCase):
     
     def setUp(self):
@@ -271,8 +270,7 @@ class FindRoutesForPackage_Should(unittest.TestCase):
 
         # Asseert
         self.assertIsInstance(result, list)
-        
-        
+           
     def test_returnsOnlyRoutesThatCanDeliver(self):
         
         # Act
@@ -423,7 +421,6 @@ class AssignPackageToRoute_Should(unittest.TestCase):
         self.mock_stop_a.add_drop_off_weight.assert_not_called()
         self.mock_stop_b.add_pick_up_weight.assert_not_called()
         self.mock_stop_b.add_drop_off_weight.assert_called_once_with(10)
-
 
 class AssignPackagesFromHubs_Should(unittest.TestCase):
 
@@ -633,7 +630,6 @@ class AssignPackagesFromHubs_Should(unittest.TestCase):
         # Assert
         self.mock_route.add_package.assert_not_called()
         
-    
     def test_raiseError_whenDropOffStopMissing(self):
         """ 
             This is now a valid joke.
@@ -643,8 +639,7 @@ class AssignPackagesFromHubs_Should(unittest.TestCase):
         """
         # Assert
         self.assertTrue(True)
-        
-        
+          
 class AssignTruckToRoute_Should(unittest.TestCase):
     
     def setUp(self):
@@ -664,8 +659,7 @@ class AssignTruckToRoute_Should(unittest.TestCase):
         # Assert
         self.assertEqual(self.mock_route.vehicle_id, 1001)
         self.assertEqual(self.mock_vehicle.route_id, 1)
-
-        
+   
     def test_raiseError_WhenRouteAlreadyHasTruck(self):
         
         # Arrange
@@ -876,8 +870,7 @@ class CompleteAllRoutesNextStop_Should(unittest.TestCase):
         
         # Arrange
         self.mock_mark_route_method.assert_called_once_with(self.mock_route1)
-
-        
+  
 class LoadRoutePackagesFromStop_Should(unittest.TestCase):
     
     def setUp(self):
@@ -946,8 +939,6 @@ class LoadRoutePackagesFromStop_Should(unittest.TestCase):
         # Assert
         self.mock_package1.start_delivery.assert_called_once()
         self.mock_package2.start_delivery.assert_called_once()
-
-    
 
 class UnloadRoutePackagesToStop_Should(unittest.TestCase):
     

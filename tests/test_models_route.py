@@ -32,8 +32,8 @@ class Route_Should(unittest.TestCase):
 
     def test_weightAtStop_CalculatesLoadCorrectly(self):
         # Picking up 100 in Sydney, dropping off 50 in Melbourne
-        self.stops[0].add_pick_up_weigth(100.0)
-        self.stops[1].add_drop_off_weigth(50.0)
+        self.stops[0].add_pick_up_weight(100.0)
+        self.stops[1].add_drop_off_weight(50.0)
         
         self.assertEqual(self.route.weight_at_stop(0), 100.0)
         self.assertEqual(self.route.weight_at_stop(1), 50.0)
@@ -61,15 +61,15 @@ class Route_Should(unittest.TestCase):
         self.assertIsNone(self.route.current_location)
 
     def test_calculateStopsCapacity_ShowsCorrectWeightAtEachStop(self):
-        self.stops[0].add_pick_up_weigth(100.0)
-        self.stops[1].add_drop_off_weigth(50.0)
+        self.stops[0].add_pick_up_weight(100.0)
+        self.stops[1].add_drop_off_weight(50.0)
         
         capacities = self.route.calculate_stops_capacity()
         self.assertEqual(capacities, [100.0, 50.0])
 
     def test_routeStopsInfo_CalculatesFreeCapacity(self):
         # Truck cap 500, load 100 Free 400
-        self.stops[0].add_pick_up_weigth(100.0)
+        self.stops[0].add_pick_up_weight(100.0)
         info = self.route.route_stops_info(vehicle_max_capacity=500)
         
         self.assertIn("Free: [400.0 kg]", info)

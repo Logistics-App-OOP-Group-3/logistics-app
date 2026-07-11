@@ -111,9 +111,7 @@ class Initializer_Should(unittest.TestCase):
         
         # Assert
         self.assertEqual(package.status, VALID_STATUS)
-            
-
-            
+                    
 class AssignToRouteShould(unittest.TestCase):
     
     def setUp(self):
@@ -215,11 +213,3 @@ class StrMethods_Should(unittest.TestCase):
         self.assertIn(VALID_START_LOCATION.value, result)
         self.assertIn(VALID_END_LOCATION.value, result)
         
-
-
-
-
-
-
-        
-    
