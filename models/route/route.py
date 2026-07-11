@@ -16,6 +16,15 @@ class Route:
         if len(stops) < 2:
             raise ValueError("A route must have at least two stops.")
 
+        locations = [stop.location for stop in stops]
+        if len(locations) != len(set(locations)):
+            raise ValueError("Route construction failed: Duplicate locations are not allowed in this route.")
+        
+        # Check for consecutive duplicates
+        for i in range(len(locations) - 1):
+            if locations[i] == locations[i+1]:
+                raise ValueError(f"Route construction failed: Consecutive duplicate '{locations[i].value}' not allowed.")
+        
         self._route_id = route_id
         self._vehicle_id = None
         self._packages_ids: set[int] = set() 

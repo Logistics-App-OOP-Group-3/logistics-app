@@ -16,20 +16,27 @@ class RouteInfoCommandShould(unittest.TestCase):
     def test_execute_returns_no_packages_message(self, mock_parse):
         # Arrange
         mock_parse.return_value = 101
+        
         mock_route = MagicMock()
         mock_route.packages_ids = []
         mock_route.__str__.return_value = "Route 101 Details"
         self.mock_route_service.get_route.return_value = mock_route
         
-        command = RouteInfoCommand(self.params, self.mock_app_data, self.mock_route_service)
+        mock_vehicle = MagicMock()
+        mock_vehicle.max_capacity = 500
+        self.mock_app_data.find_vehicle.return_value = mock_vehicle
+        
+        # Initialize the command
+        command = RouteInfoCommand(["101"], self.mock_app_data, self.mock_route_service)
         
         # Act
         result = command.execute()
-        
-        # Assert
-        self.assertIn("No packages have been assigned", result)
-        self.assertEqual(result, "Route 101 Details\nPackages: No packages have been assigned to this route.")
 
+        indent = " " * 56
+        expected = f"Route 101 Details\n{indent}Max capaci: 500 kg\nPackages: No packages have been assigned to this route."
+        
+        self.assertEqual(result, expected)
+    
     @patch('commands.route_info_command.try_parse_int')
     def test_execute_returns_list_of_package_ids(self, mock_parse):
         # Arrange

@@ -62,7 +62,7 @@ class CreatePackageCommandShould(unittest.TestCase):
         
         # Mock finding a route
         mock_route = MagicMock()
-        mock_route.id = 1
+        mock_route.route_id = 1
         mock_route.route_stops_info.return_value = "Stop Info Details"
         self.mock_route_service.find_routes_for_package.return_value = [mock_route]
         
