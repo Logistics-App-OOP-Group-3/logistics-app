@@ -31,6 +31,7 @@ class CommandFactory:
         self._package_service = PackageService(app_data)
         self._vehicle_service = VehicleService(app_data)
         self._hub_service = HubService(app_data)
+        self._route_service = RouteService(app_data)
 
         self._data_repository = DataRepository(app_data)
         self._data_repository.load()
@@ -44,6 +45,7 @@ class CommandFactory:
                 params,
                 self._app_data,
                 self._package_service,
+                self._route_service
             )
         
         if cmd == "assignpackage":

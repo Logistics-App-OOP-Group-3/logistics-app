@@ -4,13 +4,15 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from services.package_service import PackageService
+    from services.route_service import RouteService
     from core.application_data import ApplicationData
 
 class CreatePackageCommand(BaseCommand):
-    def __init__(self, params, app_data: 'ApplicationData', package_service: 'PackageService'):
+    def __init__(self, params, app_data: 'ApplicationData', package_service: 'PackageService', route_service: 'RouteService'):
         val_help.validate_params_count(params, 4, "CreatePackageCommand")
         super().__init__(params, app_data)
         self._package_service = package_service
+        self._route_service = route_service
     
     def execute(self):
         start_location = val_help.try_parse_city(self.params[0])
@@ -27,9 +29,20 @@ class CreatePackageCommand(BaseCommand):
         hub = self._app_data.find_hub(start_location)
         hub.add_single_package(package)
         
-        return f"Package {package.package_id} created successfully and left at hub {hub.city.value}."
-    
-        #TODO: Call find_routes_for_package and display the info
-        #TODO: Call route_stops_info instead of __str__ to display available capacity per stop(refactor if needed)
-        #TODO:  for the employee to look up and try to assign the package which if it cant fit will raise error
-          
+        # Основно съобщение за успех
+        result = [f"Package {package.package_id} created successfully and left at hub {hub.city.value}."]
+        
+        # Търсим налични маршрути за пакета
+        available_routes = self._route_service.find_routes_for_package(package)
+        
+        if not available_routes:
+            result.append("\nNo available routes currently found for this package's destination.")
+        else:
+            result.append("\nAvailable routes for assignment:")
+            for route in available_routes:
+                result.append(f"--- Route #{route.id} ---")
+                # Използваме route_stops_info() вместо __str__, за да видим капацитета по спирки
+                result.append(route.route_stops_info())
+                result.append("-" * 25)
+        
+        return "\n".join(result)
