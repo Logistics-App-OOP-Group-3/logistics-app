@@ -121,8 +121,8 @@ class Route:
     def weight_at_stop(self, stop_index: int) -> float:
         weight = 0
         for stop in self._stops[:stop_index + 1]:
-            weight = round(weight + stop.pick_up_weigth, 2)
-            weight = round(weight - stop.drop_off_weigth, 2)
+            weight = round(weight + stop.pick_up_weight, 2)
+            weight = round(weight - stop.drop_off_weight, 2)
         return weight
 
     def calculate_stops_capacity(self):
