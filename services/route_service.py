@@ -48,6 +48,7 @@ class RouteService:
         
         route.status = RouteStatus.COMPLETED
         
+        
     def mark_stop_as_completed(self,route :Route , stop_index: int):
         stops = route.stops
         if not 0 <= stop_index < len(stops):
@@ -58,15 +59,24 @@ class RouteService:
         
 
     def find_routes_for_package(self, package: Package):
-
+        
+    #  #  #  #  #  #  #  #  # #  #  
+    #  #  Tsvetelin Istatkov: #  #  
+    #  #  #  #  #  #  #  #  # #  #  
+    # changed from .get_all_routes()
+    # to           .get_routes_in_progress()
+    # Routes with status == RouteStatus.PLANNED
+    # are dead in the app
+    # and completed routes should not be provided 
         return [
             route
-            for route in self._app_data.routes.values()
+            for route in self.get_routes_in_progress()
             if route.can_deliver_between(
                 package.start_location,
                 package.end_location
             )
         ]
+        
         
     def assign_package_to_route(self, package: Package, route_id: int):
         """
@@ -109,7 +119,6 @@ class RouteService:
         dropoff_stop.add_drop_off_weight(package.weight)
 
 
-
     def assign_packages_from_hubs(self, route: Route, vehicle: Vehicle):
         """
         For each stop, find unassigned packages at that hub
@@ -144,7 +153,6 @@ class RouteService:
                 dropoff_stop.add_drop_off_weight(package.weight)
 
 
-
     def assign_truck_to_route(self, route: Route, vehicle: Vehicle):
         
         if route.vehicle_id is not None:
@@ -155,6 +163,7 @@ class RouteService:
 
         route.vehicle_id = vehicle.vehicle_id
         vehicle.route_id = route.route_id
+
 
     def start_route(self, route: Route):
         if route.vehicle_id is None:
@@ -171,6 +180,7 @@ class RouteService:
         
         route.status = RouteStatus.IN_PROGRESS
         
+        
     # SIMULATION FUNC
     def complete_all_routes_next_stop(self):
         """Simulation func": that executes the completion of route's next stop"""
@@ -186,8 +196,8 @@ class RouteService:
                 self.unload_route_packages_to_stop(route, stop_idx)
                 self.load_route_packages_from_stop(route, stop_idx)
                 
-            self.mark_stop_as_completed(route, stop_idx)
-                
+            self.mark_stop_as_completed(route, stop_idx)         
+
 
     def load_route_packages_from_stop(self, route: Route, stop_index: int):
         stop = route.stops[stop_index]
@@ -198,6 +208,7 @@ class RouteService:
                 hub.remove_single_package(package_id)
                 package = self._app_data.find_package(package_id)
                 package.start_delivery()
+    
     
     def unload_route_packages_to_stop(self, route: Route, stop_index: int):
         stop = route.stops[stop_index]
@@ -210,8 +221,7 @@ class RouteService:
                 package.mark_delivered()
             package.current_location = stop.location
         
-    
-    
+        
     def get_eta_for_location(self, route_id: int, location: City):
         route = self.get_route(route_id)
         for stop in route.stops:
