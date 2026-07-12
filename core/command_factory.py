@@ -39,12 +39,11 @@ class CommandFactory:
     def create(self, input_line: str):
         cmd, *params = input_line.split()
         cmd = cmd.lower()
-
-        if cmd == "createpackage":
-            return CreatePackageCommand(
+        
+        if cmd == "advanceroutes":
+            return AdvanceRoutesCommand(
                 params,
                 self._app_data,
-                self._package_service,
                 self._route_service
             )
         
@@ -52,6 +51,14 @@ class CommandFactory:
             return AssignPackageCommand(
                 params,
                 self._app_data,
+                self._route_service
+            )
+            
+        if cmd == "createpackage":
+            return CreatePackageCommand(
+                params,
+                self._app_data,
+                self._package_service,
                 self._route_service
             )
         
@@ -63,13 +70,6 @@ class CommandFactory:
                 self._vehicle_service
             )
             
-        if cmd == "unassignedpackages":
-            return UnassignedPackagesCommand(
-                params,
-                self._app_data,
-                self._package_service
-            )
-        
         if cmd == "hubsinfo":
             return HubInfoCommand(
                 params,
@@ -99,16 +99,18 @@ class CommandFactory:
                 self._route_service,
             )
         
-        if cmd == "advanceroutes":
-            return AdvanceRoutesCommand(
-                params,
-                self._app_data,
-                self._route_service
-            )
         if cmd == "routesinprogress":
             return RoutesInProgressInfoCommand(
                 params,
                 self._app_data,
                 self._route_service
             )
+            
+        if cmd == "unassignedpackages":
+            return UnassignedPackagesCommand(
+                params,
+                self._app_data,
+                self._package_service
+            )
+        
         raise ValueError(f"Invalid command name: {cmd}!")
