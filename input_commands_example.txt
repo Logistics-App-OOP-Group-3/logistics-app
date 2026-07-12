@@ -13,3 +13,26 @@ createroute dec-5rd-06:00h asp mel adl
 
 # raises error
 createroute dec-10th-06:00h asp mel asp
+
+
+
+# Workflow 1
+
+create routes
+Create first 3 packages
+
+assignpackage 1 1
+assignpackage 3 1
+
+unassignedpackages
+routesinprogress  
+
+advanceroutes
+routeinfo 1
+advanceroutes
+routeinfo 1
+
+createpackage mel bri 101.01 goshko-i-maria-are-in-love
+
+advanceroutes
+routeinfo 1

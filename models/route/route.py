@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from models.route.route_stop import RouteStop
 from enums.route_status import RouteStatus
 from models.route.city_graph import CityGraph
+from enums.city import City
 
 class Route:
     """
@@ -76,14 +77,14 @@ class Route:
         return self._stops[0].location
     
     @property
-    #TODO: Refactor to last_completed_location
-    def current_location(self) -> str | None:
+    #TODO: Refactor name to last_completed_location
+    def current_location(self) ->  City | None:
         """Last completed city"""
         last_stop = None
         for stop in self._stops:
             if stop.stop_status == RouteStatus.COMPLETED:
                 last_stop = stop
-        return last_stop.location.value if last_stop is not None else None
+        return last_stop.location if last_stop is not None else None
         
     @property                         
     def end_location(self):
@@ -106,7 +107,7 @@ class Route:
         
         # REFACTORING COMMENTS  
         # if start is after end => cant deliver
-        if self.locations.index(start_location) > self.locations.index(end_location):
+        if self.locations.index(start_location) >= self.locations.index(end_location):
             return False
 
         last_completed_location = self.current_location
@@ -188,7 +189,7 @@ class Route:
         result.append(f"Status: {self.status.value}")
         result.append(f"Vehicle ID: {self._vehicle_id}")
         if self.status != RouteStatus.COMPLETED:
-            location = self.current_location
+            location = self.current_location.value if self.current_location is not None else None
             if location is None:
                 result.append(f"Next stop: : {self.start_location}")
             else:
