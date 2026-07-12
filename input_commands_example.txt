@@ -1,9 +1,15 @@
 createpackage dar mel 140 gosho@abv.bg
 createpackage syd bri 20 0882546632
-createpackage mel bri 45.20 toshko
+createpackage mel bri 45.20 toshko@afrikanski.bg
 createpackage adl syd 120.45 pesho@email.bg
-createpackage asp adl 2444.44 sestramu
-createpackage bri per 260 bratmu
-createpackage dar syd 67.68 chichomu
-createpackage per bri 99.99 2riqetaj
+createpackage asp adl 2444.44 sestramu-she-go-zeme-nq-se-pritesnqvash
+createpackage bri per 260 bratmu-she-sleze
+createpackage dar syd 67.68 chichomu-e-prezidenta-na-amerika
+createpackage per bri 99.99 2riqetaj-zvynnete-na-domofona
+
 createroute Sep-12th-06:00h Dar Mel Bri
+createroute dec-21st-06:00h Syd mel adl
+createroute dec-5rd-06:00h asp mel adl
+
+# raises error
+createroute dec-10th-06:00h asp mel asp
