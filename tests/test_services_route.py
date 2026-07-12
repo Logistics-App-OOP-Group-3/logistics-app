@@ -235,9 +235,9 @@ class FindRoutesForPackage_Should(unittest.TestCase):
         self.mock_app_data = MagicMock()
         self.route_service = RouteService(self.mock_app_data)
                 
-        self.mock_route1 = MagicMock(spec_set=Route)
+        self.mock_route1 = MagicMock(spec_set=Route, status = RouteStatus.IN_PROGRESS)
         self.mock_route1.can_deliver_between.return_value = True
-        self.mock_route2 = MagicMock(spec_set=Route)  
+        self.mock_route2 = MagicMock(spec_set=Route, status = RouteStatus.IN_PROGRESS)  
         self.mock_route2.can_deliver_between.return_value = False
         self.mock_routes = [self.mock_route1, self.mock_route2]
         
