@@ -76,6 +76,7 @@ class Route:
         return self._stops[0].location
     
     @property
+    #TODO: Refactor to last_completed_location
     def current_location(self) -> str | None:
         """Last completed city"""
         last_stop = None
@@ -103,7 +104,24 @@ class Route:
         if start_location not in self.locations or end_location not in self.locations:
             return False
         
-        return self.locations.index(start_location) < self.locations.index(end_location)
+        # REFACTORING COMMENTS  
+        # TODO: Add package stard != end locations validation
+        # if start is after end => cant deliver
+        if self.locations.index(start_location) > self.locations.index(end_location):
+            return False
+
+        last_completed_location = self.current_location
+        # if no locations are completed in the route. So far in the if checks => can deliver
+        if last_completed_location is None:
+            return True
+        
+        # if index of last_completed city >= start_location => cant deliver
+        if self.locations.index(last_completed_location) >= self.locations.index(start_location):
+            return False
+        
+        #if everything pass => can deliver
+        return True
+        
 
     def add_package(self, package_id: int):
         if package_id in self._packages_ids:
@@ -173,9 +191,9 @@ class Route:
         if self.status != RouteStatus.COMPLETED:
             location = self.current_location
             if location is None:
-                result.append(f"Location: On the way to: {self.start_location}")
+                result.append(f"Next stop: : {self.start_location}")
             else:
-                result.append(f"Location: {location}")
+                result.append(f"Last known location: : {location}")
                
         result.append("-stops info-")
         for index, stop in enumerate(self._stops):
