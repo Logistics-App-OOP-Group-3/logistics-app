@@ -15,7 +15,7 @@ class Engine:
         
         while True:
             try:
-                input_line = input()
+                input_line = input().strip()
 
                 if input_line.lower() in ["end", "exit"]:
                     break
