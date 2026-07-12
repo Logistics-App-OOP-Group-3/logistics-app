@@ -105,7 +105,6 @@ class Route:
             return False
         
         # REFACTORING COMMENTS  
-        # TODO: Add package stard != end locations validation
         # if start is after end => cant deliver
         if self.locations.index(start_location) > self.locations.index(end_location):
             return False
