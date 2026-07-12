@@ -36,7 +36,7 @@ def try_parse_date_time(value: str) -> datetime:
 
     The current year is assumed. If it's currently December and the
     parsed month is January, the date is treated as rolling into next
-    year (e.g. parsing "Jan 3rd 08:00h" while it's December) — this
+    year (e.g. parsing "Jan-3rd-08:00h" while it's December) — this
     is the only case where a date that looks "earlier" is allowed.
 
     Raises ValueError if:

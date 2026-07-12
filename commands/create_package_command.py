@@ -23,6 +23,7 @@ class CreatePackageCommand(BaseCommand):
         AddToHub by matching start_location
         Display available routes(capacity check not included)
     """
+    
     def __init__(self, params, app_data: 'ApplicationData', package_service: 'PackageService', route_service: 'RouteService'):
         val_help.validate_params_count(params, 4, "CreatePackageCommand")
         super().__init__(params, app_data)

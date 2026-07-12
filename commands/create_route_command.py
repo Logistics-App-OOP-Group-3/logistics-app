@@ -8,14 +8,15 @@ class CreateRouteCommand(BaseCommand):
     """
     input_trigger: createroute 
         param[0]: date_time [format: Sep-12th-06:00h]
-        *params: enum.City
+        *params: enum.City  [unique values]
     excetuion:
         CreateRoute with:
             start_time: param[0]
             stops: list[*params]
         SearchVehicle by availability and total route distance
-        Assign packages from hubs the route visits in consecutive order
-        StartRoute(chages_status)
+        Assigns packages from hubs in the route's consecutive visit order,
+        using FIFO order within each hub.
+        Mark route and stops IN_PROGRESS
     """
 
     def __init__(self, params, app_data, route_service: RouteService, vehicle_service: VehicleService):
@@ -25,8 +26,8 @@ class CreateRouteCommand(BaseCommand):
 
 
     def execute(self):
-        
-        date_time = vh.try_parse_date_time(self.params[0]) # 'Sep-12th-06:00h'
+        # Capitalize the input to match the expected format ("Jan-31-14:30h").
+        date_time = vh.try_parse_date_time(self.params[0].capitalize())
         stops = [
             RouteStop(vh.try_parse_city(location))
             for location 
