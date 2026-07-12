@@ -8,6 +8,13 @@ if TYPE_CHECKING:
 
 
 class PackageInfoCommand(BaseCommand):
+    """
+    input_trigger: packageinfo
+        param[0]: package_id: int
+    execution:
+        Shows full package properties info with additional arival_eta.
+    """
+    
 
     def __init__(self, params, app_data, package_service: "PackageService", route_service: "RouteService"):
         # Expected input: <package_id>

@@ -8,6 +8,21 @@ if TYPE_CHECKING:
     from core.application_data import ApplicationData
 
 class CreatePackageCommand(BaseCommand):
+    """
+    input_trigger: createpackage
+        param[0]: enum.City
+        param[1]: enum.City
+        param[2]: float
+        param[3]: string
+    exectuion:
+        CreatePackage with:
+            start_location: param[0]
+            end_location:   param[1]
+            weight:         param[2]
+            contact_info:   param[3]
+        AddToHub by matching start_location
+        Display available routes(capacity check not included)
+    """
     def __init__(self, params, app_data: 'ApplicationData', package_service: 'PackageService', route_service: 'RouteService'):
         val_help.validate_params_count(params, 4, "CreatePackageCommand")
         super().__init__(params, app_data)
@@ -15,6 +30,7 @@ class CreatePackageCommand(BaseCommand):
         self._route_service = route_service
     
     def execute(self):
+
         start_location = val_help.try_parse_city(self.params[0])
         end_location = val_help.try_parse_city(self.params[1])
         weight = val_help.try_parse_float(self.params[2])

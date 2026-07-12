@@ -9,6 +9,13 @@ if TYPE_CHECKING:
     from core.application_data import ApplicationData
 
 class HubInfoCommand(BaseCommand):
+    """
+    input_trigger: hubsinfo
+    execution:
+        Shows unassigned packages total weight and count in each hub,
+        sorted by weight and then count.
+    """
+    
     def __init__(self, params, app_data: ApplicationData, hub_service: HubService):
         validate_params_count(params, 0, "HubInfoCommand")
         super().__init__(params, app_data)

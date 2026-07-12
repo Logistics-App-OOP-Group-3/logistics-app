@@ -21,6 +21,7 @@ class Route:
             raise ValueError("Route construction failed: Duplicate locations are not allowed in this route.")
         
         # Check for consecutive duplicates
+        # CURRENTLY NOT USED FOR ANYTHING
         for i in range(len(locations) - 1):
             if locations[i] == locations[i+1]:
                 raise ValueError(f"Route construction failed: Consecutive duplicate '{locations[i].value}' not allowed.")

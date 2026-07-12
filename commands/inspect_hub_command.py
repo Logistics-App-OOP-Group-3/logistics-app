@@ -8,6 +8,14 @@ if TYPE_CHECKING:
     from core.application_data import ApplicationData
     from services.hub_service import HubService
 class InspectHubCommand(BaseCommand):
+    """
+    input_trigger: inspecthub
+        param[0]: city: enum.City
+    execution:
+        Shows unassigned packages total weight and count in the hub grouped by end_location,
+        sorted by weight and then count.
+    """
+    
     def __init__(self, params, app_data: ApplicationData, hub_service: HubService):
         vh.validate_params_count(params, 1, "InspectHubCommand")
         super().__init__(params, app_data)

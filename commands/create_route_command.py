@@ -5,6 +5,18 @@ from services.vehicle_service import VehicleService
 import commands.validation_helper as vh
 
 class CreateRouteCommand(BaseCommand):
+    """
+    input_trigger: createroute 
+        param[0]: date_time [format: Sep-12th-06:00h]
+        *params: enum.City
+    excetuion:
+        CreateRoute with:
+            start_time: param[0]
+            stops: list[*params]
+        SearchVehicle by availability and total route distance
+        Assign packages from hubs the route visits in consecutive order
+        StartRoute(chages_status)
+    """
 
     def __init__(self, params, app_data, route_service: RouteService, vehicle_service: VehicleService):
         super().__init__(params, app_data)
@@ -13,14 +25,8 @@ class CreateRouteCommand(BaseCommand):
 
 
     def execute(self):
-        """
-        CREATE route with stops      (route_service)[init all stop departure & arival time]
-        SEACH for available vehicle  (vehicle_service)
-        DISCARD route if no vehicle to complete it AND raise error
-        ADD packages from hubs (FIFO) calculating how much is droped off and picked up at each stop
-        """
         
-        date_time = vh.try_parse_date_time(self.params[0])
+        date_time = vh.try_parse_date_time(self.params[0]) # 'Sep-12th-06:00h'
         stops = [
             RouteStop(vh.try_parse_city(location))
             for location 

@@ -16,6 +16,11 @@ _CITY_LOOKUP = {
 }
 
 def try_parse_city(city_value_or_name: str):
+    """
+    Parses string to enums.City 
+    Case insensitively
+    Works with enum member's name and value.
+    """
     member = _CITY_LOOKUP.get(city_value_or_name.strip().lower())
     if member is None:
         raise ValueError(f"Can\'t parse {city_value_or_name} to City enum object.")

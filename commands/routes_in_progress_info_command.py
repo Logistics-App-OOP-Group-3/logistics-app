@@ -7,6 +7,11 @@ if TYPE_CHECKING:
     from services.route_service import RouteService
 
 class RoutesInProgressInfoCommand(BaseCommand):
+    """
+    input_trigger: routesinprogress
+    execution:
+        Show routes in progress.
+    """
     
     def __init__(self, params, app_data, route_service: 'RouteService'):
         super().__init__(params, app_data)

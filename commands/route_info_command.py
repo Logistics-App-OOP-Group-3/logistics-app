@@ -7,6 +7,15 @@ if TYPE_CHECKING:
     from services.route_service import RouteService
 
 class RouteInfoCommand(BaseCommand):
+    """
+    input_trigger: routeinfo
+        param[0]: route_id: int
+    execution:
+        Shows full route properties info with additional:
+            info for each route stop + assigned packages total weight
+            assigned vehicle max capacity
+            assigned packages ids
+    """
 
     def __init__(self, params, app_data, route_service :"RouteService"):
         # Expected input: <route_id>

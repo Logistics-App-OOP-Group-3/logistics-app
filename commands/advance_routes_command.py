@@ -8,7 +8,12 @@ if TYPE_CHECKING:
     from core.application_data import ApplicationData
 
 class AdvanceRoutesCommand(BaseCommand):
-    """ Simulation command that completes each route(InProgress) next stop """
+    """
+    SIMULATION COMMAND
+    input_trigger: advanceroutes
+    execution:
+        Completes next stop for each route IN_PROGRESS
+    """
     
     def __init__(self,params, app_data: ApplicationData, route_service: RouteService):
         validate_params_count(params, 0, "AdvanceRoutesCommand")

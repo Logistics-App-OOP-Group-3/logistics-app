@@ -7,6 +7,14 @@ if TYPE_CHECKING:
     from core.application_data import ApplicationData
 
 class AssignPackageCommand(BaseCommand):
+    """
+    input_trigger: assignpackage
+        param[0]: package_id: int
+        param[1]: route_id: int
+    execution:
+        Assigns package to route after route location validation
+        and vehicle weight capacity validation
+    """
     def __init__(self, params, app_data: 'ApplicationData', route_service: 'RouteService'):
         #<package_id> <route_id>
         validate_params_count(params, 2, "AssignPackageCommand")
@@ -14,6 +22,7 @@ class AssignPackageCommand(BaseCommand):
         self._route_service = route_service
 
     def execute(self):
+        
         package_id = try_parse_int(self.params[0])
         route_id = try_parse_int(self.params[1])
         
