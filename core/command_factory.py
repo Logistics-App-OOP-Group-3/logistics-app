@@ -21,6 +21,7 @@ from core.data_repository import DataRepository
 if TYPE_CHECKING:
     from core.application_data import ApplicationData
 
+#TODO: add command: clear (clear screen)
 
 class CommandFactory:
     def __init__(self, app_data: ApplicationData):
