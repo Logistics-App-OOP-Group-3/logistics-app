@@ -29,8 +29,8 @@ class AssignPackageCommand(BaseCommand):
         package = self._app_data.find_package(package_id)
         
         if route_id == 0:
-            return f"Package {package_id} remains at hub {package.start_location.value}."
+            return f"Package {package_id} remains at hub {package.start_location.value}.\n"
         
         self._route_service.assign_package_to_route(package, route_id)
         
-        return f"Package {package_id} assigned to route {route_id} successfully."
+        return f"Package {package_id} assigned to route {route_id} successfully.\n"

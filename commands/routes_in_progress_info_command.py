@@ -21,11 +21,12 @@ class RoutesInProgressInfoCommand(BaseCommand):
         routes = self._route_service.get_routes_by_status(RouteStatus.IN_PROGRESS)
         
         if not routes:
-            return "No routes are currently in progress."
+            return "\nNo routes are currently in progress.\n"
         
-        result = ["--- Routes In Progress ---"]
+        result = ["\n--- Routes In Progress ---"]
         for route in routes:
-            result.append(str(route))
+            result.append('\n' + str(route))
             result.append("-" * 30)
-            
+        
+        result.append("")
         return "\n".join(result)

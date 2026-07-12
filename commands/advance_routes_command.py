@@ -23,4 +23,4 @@ class AdvanceRoutesCommand(BaseCommand):
     def execute(self):
         self._route_service.complete_all_routes_next_stop()
         
-        return f"All routes advanced to their next stop."
+        return f"All routes advanced to their next stop.\n"

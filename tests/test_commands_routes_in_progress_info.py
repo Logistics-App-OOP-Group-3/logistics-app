@@ -18,7 +18,7 @@ class RoutesInProgressInfoCommandShould(unittest.TestCase):
         result = command.execute()
         
         # Assert
-        self.assertEqual(result, "No routes are currently in progress.")
+        self.assertEqual(result, "\nNo routes are currently in progress.\n")
         self.mock_route_service.get_routes_by_status.assert_called_once_with(RouteStatus.IN_PROGRESS)
 
     def test_execute_returns_formatted_list_of_routes(self):

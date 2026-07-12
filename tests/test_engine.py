@@ -40,7 +40,7 @@ class EngineShould(unittest.TestCase):
         self.engine.start()
 
         # Assert
-        mock_print.assert_called_with("Invalid command!")
+        mock_print.assert_called_with("Invalid command!\n")
 
     @patch('builtins.input')
     @patch('os.system')

@@ -47,20 +47,21 @@ class CreatePackageCommand(BaseCommand):
         hub.add_single_package(package)
         
         # Основно съобщение за успех
-        result = [f"Package {package.package_id} created successfully and left at hub {hub.city.value}."]
+        result = [f"\nPackage {package.package_id} created successfully and left at hub {hub.city.value}."]
         
         # Търсим налични маршрути за пакета
         available_routes = self._route_service.find_routes_for_package(package)
         
         if not available_routes:
-            result.append("\nNo available routes currently found for this package's destination.")
+            result.append("No available routes currently found for this package's destination.\n")
         else:
-            result.append("\nAvailable routes for assignment:")
+            result.append("Available routes for assignment:")
             for route in available_routes:
                 result.append(f"--- Route #{route.route_id} ---")
                 # Използваме route_stops_info() вместо __str__, за да видим капацитета по спирки
                 vehicle = self.app_data.find_vehicle(route.vehicle_id)
                 result.append(route.route_stops_info(vehicle.max_capacity))
                 result.append("-" * 25)
+            result.append("")
         
         return "\n".join(result)

@@ -46,8 +46,17 @@ class CreateRouteCommand(BaseCommand):
         self._route_service.assign_truck_to_route(route, vehicle)
         self._route_service.assign_packages_from_hubs(route, vehicle)
         self._route_service.start_route(route) # status init method
-                        
+                
+        # use [result_list + join] to skip '--' separation of message for automatically assigned packages, when none        
         return (
-            f"Route created successfully.\n"
-            f"{route}"
+            f"\nRoute created successfully.\n"
+            f"--\n"
+            f"{'\n'.join(
+                [
+                    f'Package [{package_id}] assigned to route [{route.route_id}]'
+                    for package_id in route.packages_ids
+                ]
+                )}\n"
+            f"--\n"
+            f"{route}\n"
         )

@@ -69,7 +69,7 @@ class Package:
         self.status = PackageStatus.DELIVERED
     
     def short_info(self) -> str:
-        return f"[{self._package_id}] {self._start_location.value} -> {self._end_location.value}"
+        return f"[{self._package_id}] {self._start_location.value} -> {self._end_location.value} ({self._weight} kg.)"
         
     def __str__(self):
         result = [

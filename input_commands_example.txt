@@ -36,3 +36,24 @@ createpackage mel bri 101.01 goshko-i-maria-are-in-love
 
 advanceroutes
 routeinfo 1
+
+# Workflow 2
+# PACKAGE OR ROUTES first
+
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage dar bri 5000 gosho@abv.bg
+createpackage mel bri 5000 gosho@abv.bg
+createpackage mel bri 200 gosho@abv.bg
+
+createroute Sep-12th-06:00h Dar Mel Bri
+
+# last package with 5000 should be unnasigned
+unassignedpackages
+
+

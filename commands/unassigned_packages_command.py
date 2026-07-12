@@ -20,4 +20,9 @@ class UnassignedPackagesCommand(BaseCommand):
 
         packages = self._package_service.get_packages_by_status(PackageStatus.NOT_ASSIGNED)
 
-        return '\n'.join([p.short_info() for p in packages])
+        result_list = [p.short_info() for p in packages]
+        if len(result_list) == 0:
+            return '\nNo unassigned packages right now.\n'
+        result_list.insert(0, "")
+        result_list.append("")
+        return '\n'.join(result_list)

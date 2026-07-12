@@ -23,4 +23,4 @@ class AdvanceRoutesCommandShould(unittest.TestCase):
         # Assert
         self.mock_route_service.complete_all_routes_next_stop.assert_called_once()
         # Verify the output message
-        self.assertEqual(result, "All routes advanced to their next stop.")
+        self.assertEqual(result, "All routes advanced to their next stop.\n")

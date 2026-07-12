@@ -26,7 +26,7 @@ class Engine:
                 print(result)
 
             except ValueError as err:
-                print(str(err))
+                print(str(err) + '\n')
         
         self._command_factory._data_repository.save() # save data to files on exit
     

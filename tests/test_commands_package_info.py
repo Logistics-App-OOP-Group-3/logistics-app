@@ -29,7 +29,7 @@ class PackageInfoCommandShould(unittest.TestCase):
         result = command.execute()
         
         # Assert
-        self.assertEqual(result, "Package 123 details")
+        self.assertEqual(result, "\nPackage 123 details\n")
         self.mock_route_service.get_eta_for_location.assert_not_called()
 
     @patch('commands.package_info_command.try_parse_int')

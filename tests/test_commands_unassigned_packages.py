@@ -13,7 +13,7 @@ class UnassignedPackagesCommandShould(unittest.TestCase):
         with self.assertRaises(ValueError):
             UnassignedPackagesCommand(["extra_param"], self.mock_app_data, self.mock_package_service)
 
-    def test_execute_returns_empty_string_if_no_packages_found(self):
+    def test_execute_returns_message_if_no_packages_found(self):
         # Arrange
         self.mock_package_service.get_packages_by_status.return_value = []
         command = UnassignedPackagesCommand(self.params, self.mock_app_data, self.mock_package_service)
@@ -22,7 +22,7 @@ class UnassignedPackagesCommandShould(unittest.TestCase):
         result = command.execute()
         
         # Assert
-        self.assertEqual(result, "")
+        self.assertEqual(result, "\nNo unassigned packages right now.\n")
         self.mock_package_service.get_packages_by_status.assert_called_once_with(PackageStatus.NOT_ASSIGNED)
 
     def test_execute_returns_newline_separated_package_info(self):
@@ -39,7 +39,7 @@ class UnassignedPackagesCommandShould(unittest.TestCase):
         result = command.execute()
         
         # Assert
-        expected = "Package 1: Pending\nPackage 2: Ready"
+        expected = "\nPackage 1: Pending\nPackage 2: Ready\n"
         self.assertEqual(result, expected)
         self.assertTrue(mock_pkg1.short_info.called)
         self.assertTrue(mock_pkg2.short_info.called)

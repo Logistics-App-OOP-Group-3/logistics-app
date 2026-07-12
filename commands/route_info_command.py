@@ -28,12 +28,14 @@ class RouteInfoCommand(BaseCommand):
         route_id = try_parse_int(self.params[0])
         route = self._route_service.get_route(route_id)
         
-        result = [str(route)]
+        result = ['\n' + str(route)]
         vehicle = self.app_data.find_vehicle(route.vehicle_id)
-        result.append(f"{"":<56}Max capaci: {vehicle.max_capacity} kg")
+        result.append(f"--{"":<54}Max capaci: {vehicle.max_capacity} kg")
         if not route.packages_ids:
             result.append('Packages: No packages have been assigned to this route.')
         else:
             result.append(f"Packages: {', '.join(map(str, route.packages_ids))}")
+        
+        result.append('')
 
         return '\n'.join(result)

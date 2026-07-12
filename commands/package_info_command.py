@@ -1,6 +1,7 @@
 from __future__ import annotations
 from commands.base.base_command import BaseCommand
 from commands.validation_helper import validate_params_count, try_parse_int
+from enums.package_status import PackageStatus
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from services.package_service import PackageService
@@ -27,9 +28,10 @@ class PackageInfoCommand(BaseCommand):
         package_id = try_parse_int(self.params[0])
         package = self._package_service.get_package(package_id)
 
-        result = [str(package)]
+        result = ['\n' + str(package)]
         
-        if package.route_id is not None:
+        if package.route_id is not None and package.status != PackageStatus.DELIVERED:
             arival_eta = self._route_service.get_eta_for_location(package.route_id, package.end_location)
             result.append(f"Expected arrival time: {arival_eta:%d/%m/%Y %H:%M}")
+        result.append("")
         return '\n'.join(result)
